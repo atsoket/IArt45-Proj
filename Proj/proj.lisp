@@ -37,7 +37,7 @@
 (defun tabuleiro-altura-coluna (tab c)
     (let ((altura 18) (contador 0))
         (loop while (< contador 18)  do
-            (if  (equal (aref tab contador c) NIL) (progn (decf altura) (incf contador)) (setf contador 10))
+            (if  (equal (aref tab contador c) NIL) (progn (decf altura) (incf contador)) (setf contador 10)) ;(setf contador 18)
         )
     altura)
 )
@@ -74,7 +74,7 @@
 (defun tabuleiro-topo-preenchido-p (tab)
    (let ((contador 0) (completo NIL))
         (loop while (< contador 10)  do
-            (if  (equal (aref tab 0 contador) NIL) (incf contador) (progn (setf contador 10) (setf completo T)))
+            (if  (equal (aref tab 0 contador) NIL) (incf contador) (progn (setf contador 10) (setf completo T))) ; O topo não é a linha 17?
         )
     completo)
 )
