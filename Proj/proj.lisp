@@ -108,12 +108,56 @@
     iguais)
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defstruct estado
+  
+  pontos
+  pecas-por-colocar
+  pecas-colocadas
+  tabuleiro
+)
+
+
+(defun copia-estado (estado)
+  (let (novo-estado (make-estado()))
+    (progn ;;se o progn for aquilo que estou a pensar isto deve funcionar
+      (setf novo-estado-pontos estado-pontos)
+      (setf novo-estado-pecas-por-colocar estado-pecas-por-colocar)
+      (setf novo-estado-pecas-colocadas estado-pecas-colocadas)
+      (setf novo-estado-tabuleiro estado-tabuleiro)
+    ) novo-estado
+  )
+)
+
+
+(defun estados-iguais-p (estado1 estado2)
+  (and
+   (equal estado1-pontos estado2-pontos)
+   (equal estado1-pecas-por-colocar estado2-pecas-por-colocar)
+   (equal estado1-pecas-colocadas estado2-pecas-colocadas)
+   (equal estado1-pecas-colocadas estado2-pecas-colocadas)
+  )
+)
+
+
+(defun estado-final-p (estado)
+  
+)
+                                            
+                                            
 ;;DEVOLVE UM ELEMENTO RANDOM DA LISTA
 (defun random-element (list)
   (nth (random (length list)) list))
 
-
-;;FUNCOES EXTRA, PARA AJUDAR A CRIAR TABULEIROS PREENCHIDOS.
+                                        
+                                        
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;FUNCOES EXTRA, PARA AJUDAR A CRIAR TABULEIROS PREENCHIDOS;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;ESTA FUNCAO PREENCHE O TBAULEIRO COM LIXO
 (defun bota-lixo (taboriginal)
@@ -131,4 +175,3 @@
                 (setf (aref taboriginal linha coluna) linha))
             )
         )
-
