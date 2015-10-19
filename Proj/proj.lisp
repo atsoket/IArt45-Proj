@@ -1,3 +1,9 @@
+;Daniel da Costa  - 69720
+;Mario Reis       - 70969
+;Filipe Fernandes - 73253
+;Grupo 16
+
+
 ;(load "utils.lisp")
 
 (defun cria-accao (cole apecas)
@@ -37,8 +43,7 @@
 ;;Esta funcao verifica se uma dada posicao de um tabuleiro
 ;; esta' preenchida.
 (defun tabuleiro-preenchido-p (tab l c)
-    (cond ((equal (aref tab l c) NIL) NIL)
-    (T T))
+    (aref tab l c)
 )
 
 ;;Percorre uma dada coluna, e retorna a altura assim que encontra uma casa preenchida.
@@ -69,26 +74,19 @@
 
 ;;escreve os valores da linha imediatamente acima na linha que tem de ser removida.
 ;;NOTA: A linha do topo e' a zero, e a mais abaixo e' a 17.
-(defun tabuleiro-remove-linha! (tabOriginal linhaOriginal) 
-       
-    (let ((linhaApagar linhaOriginal) (linhaACopiar (- linhaOriginal 1)) )
-        (loop while (> linhaApagar 0)  do
-            (dotimes (coluna 10)
-                (setf (aref tabOriginal linhaApagar coluna) (aref tabOriginal linhaACopiar coluna))
-            )
-            (decf linhaApagar)
-            (decf linhaACopiar)
-        )
+(defun tabuleiro-remove-linha! (tabuleiro linha)
+    (loop while (> linha 0) do
         (dotimes (coluna 10)
-            (setf (aref tabOriginal linhaApagar coluna) NIL)
+            (setf (aref tabuleiro linha coluna) (aref tabuleiro (- linha 1) coluna))
         )
+    (decf linha)
     )
 )
 
 ;;Nesta funcao, conforme e' encontrado uma posicao preenchida, retorna True.
 (defun tabuleiro-topo-preenchido-p (tab)
    (let ((contador 0) (completo NIL))
-        (loop while (< contador 10)  do
+       (loop while (< contador 10)  do
             (if  (equal (aref tab 0 contador) NIL) (incf contador) (progn (setf contador 10) (setf completo T)))
         )
     completo)
@@ -114,23 +112,20 @@
 
 
 (defstruct estado
-  
-  pontos
-  pecas-por-colocar
-  pecas-colocadas
-  tabuleiro
+  (pontos NIL)
+  (pecas_por_colocar NIL)
+  (pecas_colocadas NIL)
+  (tabuleiro NIL)
+)
+
+(defun cria-estado (pontos pecas pecasColocadas tabuleiro)
+    (make-estado :pontos pontos :pecas_por_colocar pecas :pecas_colocadas pecasColocadas :tabuleiro tabuleiro)
+   
 )
 
 
-(defun copia-estado (estado)
-  (let (novo-estado (make-estado()))
-    (progn ;;se o progn for aquilo que estou a pensar isto deve funcionar
-      (setf novo-estado-pontos estado-pontos)
-      (setf novo-estado-pecas-por-colocar estado-pecas-por-colocar)
-      (setf novo-estado-pecas-colocadas estado-pecas-colocadas)
-      (setf novo-estado-tabuleiro estado-tabuleiro)
-    ) novo-estado
-  )
+(defun copia-estado (estadoCopiar)
+    (make-estado :pontos (estado-pontos estadoCopiar) :pecas_por_colocar (estado-pecas_por_colocar estadoCopiar) :pecas_colocadas (estado-pecas_colocadas estadoCopiar) :tabuleiro (estado-tabuleiro estadoCopiar))
 )
 
 
@@ -141,6 +136,7 @@
    (equal estado1-pecas-colocadas estado2-pecas-colocadas)
    (equal estado1-pecas-colocadas estado2-pecas-colocadas)
   )
+;  (eq estado1 estado2)
 )
 
 
