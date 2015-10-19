@@ -17,7 +17,6 @@
 (defun accao-peca (acc)
     (cdr acc) 
 )
-;;alterar qqr coisa
 
 (defstruct tabuleiro
     (tabuleiro))
@@ -144,8 +143,8 @@
 (defun estado-final-p (estado)
   
 )
-                                            
-                                            
+
+                                
 ;;DEVOLVE UM ELEMENTO RANDOM DA LISTA
 (defun random-element (list)
   (nth (random (length list)) list))
