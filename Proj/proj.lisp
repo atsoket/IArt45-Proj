@@ -6,6 +6,9 @@
 
 ;(load "utils.lisp")
 
+;;;;;;;;;;;;;;
+;;TIPO ACCAO;;
+;;;;;;;;;;;;;;
 (defun cria-accao (cole apecas)
     (cons cole apecas)
 )
@@ -17,6 +20,11 @@
 (defun accao-peca (acc)
     (cdr acc) 
 )
+
+
+;;;;;;;;;;;;;;;;;;
+;;TIPO TABULEIRO;;
+;;;;;;;;;;;;;;;;;;
 
 (defstruct tabuleiro
     (tabuleiro))
@@ -105,11 +113,15 @@
         )
     iguais)
 )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;(defun tabuleiro->array (tabuleiro) ())
+;(defun array->tabuleiro (array) ())
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;
+;;TIPO ESTADO;;
+;;;;;;;;;;;;;;;
 
 (defstruct estado
   (pontos NIL)
@@ -144,22 +156,42 @@
   (or (equal (estado-pecas_por_colocar estado) 0) (tabuleiro-topo-preenchido-p (estado-tabuleiro estado)))
 )
 
+;;;;;;;;;;;;;;;;;
+;;TIPO PROBLEMA;;
+;;;;;;;;;;;;;;;;;
 
-;;;TIPO PROBLEMA
-
-
-(defstruct problema
+(defstruct problema ;;os elementos da estrutura sao os resultados das funcoes abaixo - esclarecer duvidas!
+    (estado-inicial (make-estado( )))
+    (solucao (solucao estado))
+    (accoes (accoes estado))
+    (resultado (resultado estado accao))
+    (custo-caminho (custo-caminho estado))
+    
+    
 )
 
-;; FUNCOES
+
+;;;;;;;;;;;;;
+;; FUNCOES ;;
+;;;;;;;;;;;;;
 
 (defun solucao (estado)
     (and (not (tabuleiro-topo-preenchido-p (estado-tabuleiro estado))) (equal (estado-pecas_por_colocar estado) 0))
 )
 
+;(defun accoes (estado) ( ))
 
-                                
-;;DEVOLVE UM ELEMENTO RANDOM DA LISTA
+;(defun resultado (estado accao) ( ))
+
+;(defun qualidade (estado) ( ))
+
+;(defun custo-oportunidade (estado) ( ))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;DEVOLVE UM ELEMENTO RANDOM DA LISTA
 (defun random-element (list)
   (nth (random (length list)) list))
 
