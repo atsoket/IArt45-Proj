@@ -127,6 +127,7 @@
     (make-estado :pontos (estado-pontos estadoCopiar) :pecas_por_colocar (estado-pecas_por_colocar estadoCopiar) :pecas_colocadas (estado-pecas_colocadas estadoCopiar) :tabuleiro (estado-tabuleiro estadoCopiar))
 )
 
+;;Esta função recebe dois estados e devolve true caso sejam iguais, caso contrário retorna null
 
 (defun estados-iguais-p (estado1 estado2)
   (and
