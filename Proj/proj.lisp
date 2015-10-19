@@ -141,8 +141,22 @@
 
 
 (defun estado-final-p (estado)
-  
+  (or (equal (estado-pecas_por_colocar estado) 0) (tabuleiro-topo-preenchido-p (estado-tabuleiro estado)))
 )
+
+
+;;;TIPO PROBLEMA
+
+
+(defstruct problema
+)
+
+;; FUNCOES
+
+(defun solucao (estado)
+    (and (not (tabuleiro-topo-preenchido-p (estado-tabuleiro estado))) (equal (estado-pecas_por_colocar estado) 0))
+)
+
 
                                 
 ;;DEVOLVE UM ELEMENTO RANDOM DA LISTA
