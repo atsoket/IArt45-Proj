@@ -17,6 +17,7 @@
 (defun accao-peca (acc)
     (cdr acc) 
 )
+;;alterar qqr coisa
 
 (defstruct tabuleiro
     (tabuleiro))
