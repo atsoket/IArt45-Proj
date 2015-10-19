@@ -120,7 +120,6 @@
 
 (defun cria-estado (pontos pecas pecasColocadas tabuleiro)
     (make-estado :pontos pontos :pecas_por_colocar pecas :pecas_colocadas pecasColocadas :tabuleiro tabuleiro)
-   
 )
 
 
@@ -131,12 +130,12 @@
 
 (defun estados-iguais-p (estado1 estado2)
   (and
-   (equal estado1-pontos estado2-pontos)
-   (equal estado1-pecas-por-colocar estado2-pecas-por-colocar)
-   (equal estado1-pecas-colocadas estado2-pecas-colocadas)
-   (equal estado1-pecas-colocadas estado2-pecas-colocadas)
+   (equal (estado-pontos estado1) (estado-pontos estado2))
+   (equal (estado-pecas_por_colocar estado1) (estado-pecas_por_colocar estado2))
+   (equal (estado-pecas_colocadas estado1) (estado-pecas_colocadas estado2))
+   (tabuleiros-iguais-p (estado-tabuleiro estado1) (estado-tabuleiro estado2))
   )
-;  (eq estado1 estado2)
+
 )
 
 
@@ -149,8 +148,7 @@
 (defun random-element (list)
   (nth (random (length list)) list))
 
-                                        
-                                        
+ 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;FUNCOES EXTRA, PARA AJUDAR A CRIAR TABULEIROS PREENCHIDOS;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
