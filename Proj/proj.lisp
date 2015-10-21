@@ -126,18 +126,18 @@
 
 (defstruct estado
   (pontos NIL)
-  (pecas_por_colocar NIL)
-  (pecas_colocadas NIL)
+  (pecas-por-colocar NIL)
+  (pecas-colocadas NIL)
   (tabuleiro NIL)
 )
 
 (defun cria-estado (pontos pecas pecasColocadas tabuleiro)
-    (make-estado :pontos pontos :pecas_por_colocar pecas :pecas_colocadas pecasColocadas :tabuleiro tabuleiro)
+    (make-estado :pontos pontos :pecas-por-colocar pecas :pecas-colocadas pecasColocadas :tabuleiro tabuleiro)
 )
 
 
 (defun copia-estado (estadoCopiar)
-    (make-estado :pontos (estado-pontos estadoCopiar) :pecas_por_colocar (estado-pecas_por_colocar estadoCopiar) :pecas_colocadas (estado-pecas_colocadas estadoCopiar) :tabuleiro (estado-tabuleiro estadoCopiar))
+    (make-estado :pontos (estado-pontos estadoCopiar) :pecas-por-colocar (estado-pecas-por-colocar estadoCopiar) :pecas-colocadas (estado-pecas-colocadas estadoCopiar) :tabuleiro (estado-tabuleiro estadoCopiar))
 )
 
 ;;Esta função recebe dois estados e devolve true caso sejam iguais, caso contrário retorna null
@@ -145,8 +145,8 @@
 (defun estados-iguais-p (estado1 estado2)
   (and
    (equal (estado-pontos estado1) (estado-pontos estado2))
-   (equal (estado-pecas_por_colocar estado1) (estado-pecas_por_colocar estado2))
-   (equal (estado-pecas_colocadas estado1) (estado-pecas_colocadas estado2))
+   (equal (estado-pecas-por-colocar estado1) (estado-pecas-por-colocar estado2))
+   (equal (estado-pecas-colocadas estado1) (estado-pecas-colocadas estado2))
    (tabuleiros-iguais-p (estado-tabuleiro estado1) (estado-tabuleiro estado2))
   )
 
@@ -154,7 +154,7 @@
 
 
 (defun estado-final-p (estado)
-  (or (equal (estado-pecas_por_colocar estado) 0) (tabuleiro-topo-preenchido-p (estado-tabuleiro estado)))
+  (or (equal (estado-pecas-por-colocar estado) 0) (tabuleiro-topo-preenchido-p (estado-tabuleiro estado)))
 )
 
 ;;;;;;;;;;;;;;;;;
@@ -162,13 +162,11 @@
 ;;;;;;;;;;;;;;;;;
 
 (defstruct problema ;;os elementos da estrutura sao os resultados das funcoes abaixo - esclarecer duvidas!
-    (estado-inicial (make-estado( )))
+    (estado-inicial (make-estado()))
     (solucao (solucao estado))
     (accoes (accoes estado))
     (resultado (resultado estado accao))
-    (custo-caminho (custo-caminho estado))
-    
-    
+    (custo-caminho (custo-caminho estado))    
 )
 
 
@@ -176,8 +174,8 @@
 ;; FUNCOES ;;
 ;;;;;;;;;;;;;
 
-(defun solucao (estado)
-    (and (not (tabuleiro-topo-preenchido-p (estado-tabuleiro estado))) (equal (estado-pecas_por_colocar estado) 0))
+(defun solucao (_estado)
+    (and (not (tabuleiro-topo-preenchido-p (estado-tabuleiro _estado))) (equal (estado-pecas-por-colocar _estado) nil))      
 )
 
 ;(defun accoes (estado) ( ))
@@ -187,6 +185,14 @@
 ;(defun qualidade (estado) ( ))
 
 ;(defun custo-oportunidade (estado) ( ))
+
+
+
+
+
+
+
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
