@@ -4,7 +4,7 @@
 ;Grupo 16
 
 
-;(load "utils.lisp")
+
 
 ;;;;;;;;;;;;;;
 ;;TIPO ACCAO;;
@@ -47,6 +47,7 @@
         )
     tabnovo)
 )
+
 
 ;;Esta funcao verifica se uma dada posicao de um tabuleiro
 ;; esta' preenchida.
@@ -192,7 +193,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;DEVOLVE UM ELEMENTO RANDOM DA LISTA
-(defun random-element (list)
+(defun random-element-meu (list)
   (nth (random (length list)) list))
 
  
@@ -204,7 +205,7 @@
 (defun bota-lixo (taboriginal)
         (dotimes (linha 18)
             (dotimes (coluna 10)
-                (setf (aref taboriginal linha coluna) (random-element '(NIL "O")))
+                (setf (aref taboriginal linha coluna) (random-element-meu '(NIL "O")))
             )
         )
 )
@@ -216,3 +217,6 @@
                 (setf (aref taboriginal linha coluna) linha))
             )
         )
+
+        
+        (load "utils.lisp")

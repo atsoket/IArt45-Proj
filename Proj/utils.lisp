@@ -67,43 +67,43 @@
 ;;; funcao que recebe um estado e uma lista de accoes e executa as accoes (pela ordem recebida) sobre o tabuleiro do estado inicial,
 ;;; desenhando no ecra os varios estados do tabuleiro. Para avancar entre ecras, o utilizador deve premir a tecla "Enter".
 ;;;	retorna o total de pontos obtidos pela sequencia de accoes no tabuleiro
-(defun executa-jogadas (estado-inicial lista-accoes)
-  (let ((estado estado-inicial))
-    (do () ((or (estado-final-p estado) (null lista-accoes)))
-      (desenha-estado estado)
-      (read-char)
-      (desenha-estado estado (first lista-accoes))
-      (read-char)
-      (setf estado (resultado estado (first lista-accoes)))
-      (setf lista-accoes (rest lista-accoes)))
-    (desenha-estado estado)
-    (estado-pontos estado)))
+;(defun executa-jogadas (estado-inicial lista-accoes)
+ ; (let ((estado estado-inicial))
+  ;  (do () ((or (estado-final-p estado) (null lista-accoes)))
+   ;   (desenha-estado estado)
+    ;  (read-char)
+     ; (desenha-estado estado (first lista-accoes))
+      ;(read-char)
+;      (setf estado (resultado estado (first lista-accoes)))
+ ;     (setf lista-accoes (rest lista-accoes)))
+  ;  (desenha-estado estado)
+   ; (estado-pontos estado)))
 
 ;;; desenha-estado: estado x accao (opcional) --> {}
 ;;; funcao que recebe um estado (e pode receber opcionalmente uma accao) e desenha o estado do jogo de tetris no ecra
 ;;; se for recebida uma accao, entao essa accao contem a proxima jogada a ser feita, e deve ser desenhada na posicao correcta por cima 
 ;;; do tabuleiro de tetris. Esta funcao nao devolve nada.		
-(defun desenha-estado (estado &optional (accao nil))
-  (let ((tabuleiro (estado-tabuleiro estado)))
-    (desenha-linha-exterior) (format T "  Proxima peca:~A~%" (first (estado-pecas-por-colocar estado))) 
-    (do ((linha 3 (- linha 1))) ((< linha 0))
-      (desenha-linha-accao accao linha) (format T "~%"))
-    (desenha-linha-exterior) (format T "  Pontuacao:~A~%" (estado-pontos estado))
-    (do ((linha 16 (- linha 1))) ((< linha 0))
-      (desenha-linha tabuleiro linha) (format T "~%"))
-    (desenha-linha-exterior)))
+;(defun desenha-estado (estado &optional (accao nil))
+;  (let ((tabuleiro (estado-tabuleiro estado)))
+   ; (desenha-linha-exterior) (format T "  Proxima peca:~A~%" (first (estado-pecas-por-colocar estado))) 
+  ;  (do ((linha 3 (- linha 1))) ((< linha 0))
+ ;     (desenha-linha-accao accao linha) (format T "~%"))
+;    (desenha-linha-exterior) (format T "  Pontuacao:~A~%" (estado-pontos estado))
+    ;(do ((linha 16 (- linha 1))) ((< linha 0))
+   ;   (desenha-linha tabuleiro linha) (format T "~%"))
+  ;  (desenha-linha-exterior)))
 
 ;;; desenha-linha-accao: accao x inteiro --> {}
 ;;; dada uma accao e um inteiro correspondente a uma linha que esta por cima do tabuleiro (linhas 18,19,20,21) desenha
 ;;; a linha tendo em conta que podera estar la a peca correspondente a proxima accao. Nao devolve nada.
-(defun desenha-linha-accao (accao linha)
-  (format T "| ")
-  (dotimes (coluna 10)
-    (format T "~A " (cond ((null accao) " ")
-			  ((and (array-in-bounds-p (accao-peca accao) linha (- coluna (accao-coluna accao)))
-				(aref (accao-peca accao) linha (- coluna (accao-coluna accao)))) "#")
-			  (T " "))))
-  (format T "|"))
+;(defun desenha-linha-accao (accao linha)
+;  (format T "| ")
+;  (dotimes (coluna 10)
+;    (format T "~A " (cond ((null accao) " ")
+;			  ((and (array-in-bounds-p (accao-peca accao) linha (- coluna (accao-coluna accao)))
+;				(aref (accao-peca accao) linha (- coluna (accao-coluna accao)))) "#")
+;			  (T " "))))
+ ; (format T "|"))
 
 ;;; desenha-linha-exterior: {} --> {}
 ;;; funcao sem argumentos que desenha uma linha exterior do tabuleiro, i.e. a linha mais acima ou a linha mais abaixo
@@ -113,7 +113,7 @@
   (format T "+-")
   (dotimes (coluna 10)
     (format T "--"))
-  (format T "+"))
+  (format T "+~%"))
 
 ;;; desenha-linha-vazia: {} --> {}
 ;;; funcao sem argumentos que desenha uma linha vazia. Nao devolve nada.
@@ -121,7 +121,7 @@
   (format T "| ")
   (dotimes (coluna 10)
     (format T "~A "))
-  (format T "|"))
+  (format T "|~%"))
 
 ;;; desenha-linha: tabuleiro,inteiro --> {}
 ;;; esta funcao recebe um tabuleiro, e um inteiro especificando a linha a desenhar
@@ -131,14 +131,21 @@
   (format T "| ")
   (dotimes (coluna 10)
     (format T "~A " (if (tabuleiro-preenchido-p tabuleiro linha coluna) "#" " ")))
-  (format T "|"))			
+  (format T "|~%"))			
 
 
-;;exemplo muito simples de um tabuleiro com a primeira e segunda linha quase todas preenchidas
+;;exemplo muito simples de um tabuleiro com a primeira e segunda linha quase todas preenchidas;
 (defvar t1 (cria-tabuleiro))
 (dotimes (coluna 9)
   (tabuleiro-preenche! t1 0 coluna))
+  
+(desenha-linha-exterior)  
 (dotimes (coluna 9)
   (tabuleiro-preenche! t1 1 coluna))
-(defvar e1 (make-estado :tabuleiro t1 :pecas-por-colocar '(i o j l t i)))
-(defvar p1 (formulacao-problema t1 '(i o j l t i)))
+  
+(dotimes (linha 18)
+  (desenha-linha t1 linha)
+)  
+(desenha-linha-exterior)  
+;(defvar e1 (make-estado :tabuleiro t1 :pecas-por-colocar '(i o j l t i)))
+;(defvar p1 (formulacao-problema t1 '(i o j l t i)))
