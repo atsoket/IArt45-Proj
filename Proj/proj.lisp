@@ -125,7 +125,7 @@
 ;;;;;;;;;;;;;;;
 
 (defstruct estado
-  (pontos NIL)
+  (pontos 0)
   (pecas-por-colocar NIL)
   (pecas-colocadas NIL)
   (tabuleiro NIL)
@@ -160,25 +160,35 @@
 ;;;;;;;;;;;;;;;;;
 ;;TIPO PROBLEMA;;
 ;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;NOTAS                                                                          ;;;
+;;;                                                                               ;;;
+;;;Imaginando que algue'm ja' criou um estado.                                    ;;;
+;;;Quando chamam o make-problema este e' enunciado da seguinte forma:             ;;;
+;;;(setf probex (make-problema :estado-inicial e1))                               ;;;
+;;;Ele cria um problema e dentro do estado-inicial tem o estado(como deve de ser) ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defstruct problema ;;os elementos da estrutura sao os resultados das funcoes abaixo - esclarecer duvidas!
-    (estado-inicial (make-estado()))
-    (solucao (solucao estado))
-    (accoes (accoes estado))
-    (resultado (resultado estado accao))
-    (custo-caminho (custo-caminho estado))    
+(defstruct problema
+    (estado-inicial)
+    (solucao) 
+    (accoes)
+    (resultado)
+    (custo-caminho)    
 )
 
 
-;;;;;;;;;;;;;
-;; FUNCOES ;;
-;;;;;;;;;;;;;
+; ;;;;;;;;;;;;;
+; ;; FUNCOES ;;
+; ;;;;;;;;;;;;;
 
 (defun solucao (_estado)
     (and (not (tabuleiro-topo-preenchido-p (estado-tabuleiro _estado))) (equal (estado-pecas-por-colocar _estado) nil))      
 )
 
-;(defun accoes (estado) ( ))
+(defun accoes (_estado)
+    (car (estado-pecas-por-colocar _estado)) ;Devolve a primeira peca
+)
 
 ;(defun resultado (estado accao) ( ))
 
