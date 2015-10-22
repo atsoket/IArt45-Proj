@@ -164,7 +164,7 @@
 ;;;NOTAS                                                                          ;;;
 ;;;                                                                               ;;;
 ;;;Imaginando que algue'm ja' criou um estado.                                    ;;;
-;;;Quando chamam o make-problema este e' enunciado da seguinte forma:             ;;;
+;;;Quando chamam o make-problema este e' enunciado da seguinte forma:              ;;;
 ;;;(setf probex (make-problema :estado-inicial e1))                               ;;;
 ;;;Ele cria um problema e dentro do estado-inicial tem o estado(como deve de ser) ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -186,9 +186,41 @@
     (and (not (tabuleiro-topo-preenchido-p (estado-tabuleiro _estado))) (equal (estado-pecas-por-colocar _estado) nil))      
 )
 
+;;Coisas para n me esquecer
+;(car (estado-pecas-por-colocar _estado)) ;Devolve a primeira peca
+;(cdr (array-dimensions peca-i1)) -> Comprimento horizontal da peca
+;(push 'accao lista_accoes) ;Adiciona uma accao 'a lista de accoes
+
+;;;Funcao: accoes
+;;;lista_accoes->Lista que vai guardar as accoes possiveis de realizar
+;;;largura_peca->Aquando do teste de cada peca, e' calculado o tamanho horizontal da mesma.(1x por cada peca)
+;;;peca_actual->E' o primeiro elemento da lista de pecas
+;;;lista_pecas-> Esta lista e' preenchida com as pecas correspondentes, dadas pelo professor.
+
 (defun accoes (_estado)
-    (car (estado-pecas-por-colocar _estado)) ;Devolve a primeira peca
+    (let ( (lista_accoes (list)) (largura_peca 0) (peca_actual nil) (lista_pecas (escolhe_peca (car (estado-pecas-por-colocar _estado)))) ) ;O lista_pecas fica com as pecas definidas no utils pelo professor.     
+        (dotimes (elementosFalta (list-length lista_pecas)) ;Este dotimes e' em quantidade igual a' das pecas
+            (setf peca_actual (pop lista_pecas))  ;peca_actual -> primeira da lista
+            (setf largura_peca (cadr (array-dimensions peca_actual) )) ;E' calculada a alrgura da peca
+            (dotimes (coluna 10)
+               (if (<= (+ coluna largura_peca ) 10) (push (cria-accao coluna peca_actual) lista_accoes) (setf coluna 10)) ;Para cada coluna e' verificado se a peca cabe la'
+                ;devo conseguir melhorar isto, mas tenho de ir fazer o jantar XD
+            )
+          )
+    (reverse lista_accoes))
 )
+
+(defun escolhe_peca (_letra)
+    (cond
+      ((equal _letra 'i) (list peca-i0 peca-i1) )
+      ((equal _letra 'l) (list peca-l0 peca-l1 peca-l2 peca-l3) )
+      ((equal _letra 'j) (list peca-j0 peca-j1 peca-j2 peca-j3) )
+      ((equal _letra 'o) (list peca-o0) )
+      ((equal _letra 's) (list peca-s0 peca-s1) )
+      ((equal _letra 'z) (list peca-z0 peca-z1) )
+      ((equal _letra 't) (list peca-t0 peca-t1 peca-t2 peca-t3) )
+    (T (list)))
+  )
 
 ;(defun resultado (estado accao) ( ))
 
