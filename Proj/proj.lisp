@@ -222,6 +222,26 @@
     (T (list)))
   )
 
+(defun resultado (_estado _accao)
+    (let ((estado_final nil) (altura_peca 0) (altura_alvo -1))
+      (progn
+          ;coloca a primeira peca da lista pecas-por-colocar na lista pecas colocadas 
+          (push (pop (estado-pecas-por-colocar _estado)) (estado-pecas-colocadas _estado))
+          ;calcula a altura da peca
+          (setf altura_peca (cadr (array-dimensions (cdr _accao))) )
+          ;A posicao a usar para preencher e' a mais acima. (comecamos pelo canto superior esquerdo da peca a.k.a linha 0 coluna 0)
+          (setf altura_alvo (1- (+ (tabuleiro-altura-coluna (estado-tabuleiro _estado) (car _accao)) altura_peca) ))
+          ;;;acabo isto em casa
+          ;;;Começar na linha (17-altura)do tabuleiro e começar a escrever
+          ;;; de (17-altura_alvo) ate' (tabuleiro-altura-coluna)
+          ;;;     de (coluna_accao) até (coluna_accao + largura da peca)
+          ;;;         escrever T  em tabuleiro linha=ciclo_1 coluna=ciclo2 (Caso a peca tenha as cenas pintadas) 
+          
+          (setf estado_final (copia-estado _estado))
+        )
+    estado_final)
+  )
+
 ;(defun resultado (estado accao) ( ))
 
 ;(defun qualidade (estado) ( ))

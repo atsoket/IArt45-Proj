@@ -136,6 +136,7 @@
 
 
 ;;exemplo muito simples de um tabuleiro com a primeira e segunda linha quase todas preenchidas;
+(defvar t0 (cria-tabuleiro))
 (defvar t1 (cria-tabuleiro))
 (dotimes (coluna 9)
   (tabuleiro-preenche! t1 0 coluna))
@@ -148,5 +149,9 @@
   (desenha-linha t1 linha)
 )  
 (desenha-linha-exterior)  
-(defvar e1 (make-estado :tabuleiro t1 :pecas-por-colocar '(i o j l t i)))
+(defvar e1 (make-estado :tabuleiro t0 :pecas-por-colocar '(i o j l t i)))
 ;(defvar p1 (formulacao-problema t1 '(i o j l t i)))
+(setf lista_accoes (accoes e1))
+(resultado e1 (car lista_accoes ))
+
+
