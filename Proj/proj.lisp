@@ -201,10 +201,10 @@
     (let ( (lista_accoes (list)) (largura_peca 0) (peca_actual nil) (lista_pecas (escolhe_peca (car (estado-pecas-por-colocar _estado)))) ) ;O lista_pecas fica com as pecas definidas no utils pelo professor.     
         (dotimes (elementosFalta (list-length lista_pecas)) ;Este dotimes e' em quantidade igual a' das pecas
             (setf peca_actual (pop lista_pecas))  ;peca_actual -> primeira da lista
-            (setf largura_peca (cadr (array-dimensions peca_actual) )) ;E' calculada a alrgura da peca
+            (setf largura_peca (cadr (array-dimensions peca_actual) )) ;E' calculada a largura da peca
             (dotimes (coluna 10)
                (if (<= (+ coluna largura_peca ) 10) (push (cria-accao coluna peca_actual) lista_accoes) (setf coluna 10)) ;Para cada coluna e' verificado se a peca cabe la'
-                ;devo conseguir melhorar isto, mas tenho de ir fazer o jantar XD
+                ;devo conseguir melhorar isto
             )
           )
     (reverse lista_accoes))
@@ -223,20 +223,46 @@
   )
 
 (defun resultado (_estado _accao)
-    (let ((estado_final nil) (altura_peca 0) (altura_alvo -1))
+    (let ((estado_final nil) (altura_peca 0) (altura_alvo -1) (altura_coluna 0) (largura_peca 0))
       (progn
           ;coloca a primeira peca da lista pecas-por-colocar na lista pecas colocadas 
           (push (pop (estado-pecas-por-colocar _estado)) (estado-pecas-colocadas _estado))
+
           ;calcula a altura da peca
-          (setf altura_peca (cadr (array-dimensions (cdr _accao))) )
-          ;A posicao a usar para preencher e' a mais acima. (comecamos pelo canto superior esquerdo da peca a.k.a linha 0 coluna 0)
-          (setf altura_alvo (1- (+ (tabuleiro-altura-coluna (estado-tabuleiro _estado) (car _accao)) altura_peca) ))
-          ;;;acabo isto em casa
-          ;;;Começar na linha (17-altura)do tabuleiro e começar a escrever
-          ;;; de (17-altura_alvo) ate' (tabuleiro-altura-coluna)
-          ;;;     de (coluna_accao) até (coluna_accao + largura da peca)
-          ;;;         escrever T  em tabuleiro linha=ciclo_1 coluna=ciclo2 (Caso a peca tenha as cenas pintadas) 
+          (setf altura_peca (car (array-dimensions (cdr _accao))))
+
+          ;Calcula a altura da coluna vazia. 
+          (setf altura_coluna (tabuleiro-altura-coluna (estado-tabuleiro _estado) (car _accao)))
+
+          ;Ca'lculo da posicao em k se comecara a escrever no tabuleiro. 
+          (setf altura_alvo (+ (- (- 17 altura_coluna) altura_peca) 1) )
+
+          ;Ca'lculo da largura da peca
+          (setf largura_peca (cadr (array-dimensions (cdr _accao))) )
+
+
+          ; (print altura_coluna)
+          ; (print altura_peca)
+          ; (print altura_alvo)
+          ; (print largura_peca)
+
+          ;Verifica se a posicao da peca esta' a T, caso esteja pinta a posicao no tabuleiro.
+          ;explico melhor na segunda-feira
+
+          (dotimes (linha_alvo altura_peca)
+            (dotimes (coluna_alvo largura_peca)
+                (if (aref (cdr _accao) linha_alvo coluna_alvo) (tabuleiro-preenche! (estado-tabuleiro _estado) (+ altura_alvo linha_alvo ) (+ (car _accao) coluna_alvo )) ())
+            )
+          )
           
+          ;NAO ESTA' ACABADO!!! FALTA VERIFICAR SE FICOU ALGUMA LINHA CHEIA!!!
+          ;NAO ESTA' ACABADO!!! FALTA VERIFICAR SE FICOU ALGUMA LINHA CHEIA!!!
+
+          ;NAO ESTA' ACABADO!!! FALTA VERIFICAR SE FICOU ALGUMA LINHA CHEIA!!!
+
+          ;NAO ESTA' ACABADO!!! FALTA VERIFICAR SE FICOU ALGUMA LINHA CHEIA!!!
+
+          ;NAO ESTA' ACABADO!!! FALTA VERIFICAR SE FICOU ALGUMA LINHA CHEIA!!!
           (setf estado_final (copia-estado _estado))
         )
     estado_final)
