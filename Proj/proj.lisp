@@ -241,6 +241,8 @@
           (setf largura_peca (cadr (array-dimensions (cdr _accao))) )
 
 
+          ;MAX ( Altura de cada coluna d apeça, a contar de cima  + altura da coluna) -> coluna-tabuleiro de escolha e a sua altura de desenho 
+
           ; (print altura_coluna)
           ; (print altura_peca)
           ; (print altura_alvo)
