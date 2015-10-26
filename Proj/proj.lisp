@@ -257,13 +257,32 @@
           
           ;NAO ESTA' ACABADO!!! FALTA VERIFICAR SE FICOU ALGUMA LINHA CHEIA!!!
           ;NAO ESTA' ACABADO!!! FALTA VERIFICAR SE FICOU ALGUMA LINHA CHEIA!!!
+;            |    #     |   (4 ((T NIL) (T T) (NIL T)) )
+;            |    ##    |
+;            |     #    |
+;           2|          |
+;           1|    #     |   altura=2?
+;           0|#### #####|
+;            |0123456789|
+
+
+;            |    #     |   (4 ((T NIL) (T T) (NIL T)) )
+;            |    ##    |
+;            |     #    |
+;           2|          |   
+;           1|     #    |
+;           0|##### ####|   altura=1?
+;            |0123456789|
+
+;           problemas com pecas cuja base não é totalmente composta por (T)
+
+;           (defun altura_coluna = max ()
+
 
           ;NAO ESTA' ACABADO!!! FALTA VERIFICAR SE FICOU ALGUMA LINHA CHEIA!!!
-
-          ;NAO ESTA' ACABADO!!! FALTA VERIFICAR SE FICOU ALGUMA LINHA CHEIA!!!
-
-          ;NAO ESTA' ACABADO!!! FALTA VERIFICAR SE FICOU ALGUMA LINHA CHEIA!!!
-          (setf estado_final (copia-estado _estado))
+          (setf estado_final (copia-estado _estado))    ;nao faz sentido o estado inicial que e' dado como argumento ser alterado
+                                                        ;podemos precisar retroceder quando fizermos procuras
+                                                        ;criar estado_resultado no inicio e alterar este
         )
     estado_final)
   )
@@ -308,9 +327,10 @@
 (defun preenche (taboriginal)
         (dotimes (linha 18)
             (dotimes (coluna 10)
-                (setf (aref taboriginal linha coluna) linha))
+                (setf (aref taboriginal linha coluna) linha)
             )
         )
+)
 
         
         (load "utils.lisp")
