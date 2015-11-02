@@ -259,35 +259,6 @@
           
           ;NAO ESTA' ACABADO!!! FALTA VERIFICAR SE FICOU ALGUMA LINHA CHEIA!!!
           ;NAO ESTA' ACABADO!!! FALTA VERIFICAR SE FICOU ALGUMA LINHA CHEIA!!!
-          
-          ;PROBLEMAS
-          
-;            |    ##    |   (4 ((T T) (NIL T) (NIL T)) )     resultado:
-;            |     #    |                                   4|    ##    |
-;            |     #    |                                   3|     #    |
-;           2|          |                                   2|     #    | peca flutua
-;           1|    #     |                                   1|    #     |
-;           0|#### #####|   altura=2?                       0|#### #####|
-;            |0123456789|                                    |0123456789|
-
-
-;            |    ##    |   (4 ((T T) (NIL T) (NIL T)) )     
-;            |     #    |                                    resultado:
-;            |     #    |                                   3|    ##    |
-;           2|          |                                   2|     #    |
-;           1|     #    |                                   1|     #    | ponto sobreposto
-;           0|##### ####|   altura=1?                       0|##### ####|
-;            |0123456789|                                    |0123456789|
-
-;           problemas com pecas cuja base nao e' totalmente composta por (T)
-            
-;           *ver funcao filter 
-            
-;           se linha inferior da peca = tudo T
-;               altura_coluna = max (altura coluna da coluna ate' coluna+largura_peca))
-;           c.c se peca 
-;               
-
           ;NAO ESTA' ACABADO!!! FALTA VERIFICAR SE FICOU ALGUMA LINHA CHEIA!!!
           (setf estado_final (copia-estado _estado))    ;nao faz sentido o estado inicial que e' dado como argumento ser alterado
                                                         ;podemos precisar retroceder quando fizermos procuras
