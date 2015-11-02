@@ -279,7 +279,7 @@
 ;           0|##### ####|   altura=1?                       0|##### ####|
 ;            |0123456789|                                    |0123456789|
 
-;           problemas com pecas cuja base não é totalmente composta por (T)
+;           problemas com pecas cuja base nao e' totalmente composta por (T)
             
 ;           *ver funcao filter 
             
