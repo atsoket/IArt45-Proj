@@ -276,7 +276,7 @@
 ;  )
 
 (defun resultado (_estado _accao)
-    (let ( ((_estado_resultado) _estado) (largura_peca (array-dimensions (accao-peca _accao) 1)) (altura_peca (array-dimensions (accao-peca _accao)) 0) )
+    (let ( (_estado_resultado _estado) (largura_peca (array-dimensions (accao-peca _accao) 1)) (altura_peca (array-dimensions (accao-peca _accao)) 0) )
         
         ;;;calcula a altura onde desenhar a peca
         (
