@@ -112,6 +112,14 @@
         )
     iguais)
 )
+
+(defun array-tabuleiro (arr)
+    (copia-tabuleiro arr) ;devolve tabuleiro
+)
+
+(defun tabuleiro-array (tabuleiro)
+    (copia-tabuleiro tabuleiro)
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;(defun tabuleiro->array (tabuleiro) ())
 ;(defun array->tabuleiro (array) ())
