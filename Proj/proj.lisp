@@ -3,9 +3,6 @@
 ;Filipe Fernandes - 73253
 ;Grupo 16
 
-
-
-
 ;;;;;;;;;;;;;;
 ;;TIPO ACCAO;;
 ;;;;;;;;;;;;;;
@@ -140,7 +137,7 @@
     (make-estado :pontos (estado-pontos estadoCopiar) :pecas-por-colocar (estado-pecas-por-colocar estadoCopiar) :pecas-colocadas (estado-pecas-colocadas estadoCopiar) :tabuleiro (estado-tabuleiro estadoCopiar))
 )
 
-;;Esta função recebe dois estados e devolve true caso sejam iguais, caso contrário retorna null
+;;Esta funcao recebe dois estados e devolve true caso sejam iguais, caso contrario retorna null
 
 (defun estados-iguais-p (estado1 estado2)
   (and
@@ -241,7 +238,7 @@
           (setf largura_peca (cadr (array-dimensions (cdr _accao))) )
 
 
-          ;MAX ( Altura de cada coluna d apeça, a contar de cima  + altura da coluna) -> coluna-tabuleiro de escolha e a sua altura de desenho 
+          ;MAX ( Altura de cada coluna d apeCa, a contar de cima  + altura da coluna) -> coluna-tabuleiro de escolha e a sua altura de desenho 
 
           ; (print altura_coluna)
           ; (print altura_peca)
