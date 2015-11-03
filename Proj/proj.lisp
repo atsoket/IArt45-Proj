@@ -75,7 +75,9 @@
 ;;preenche uma posicao do tabuleiro.
 ;;NOTA: Coloquei True, pk ainda nao decidimos que valor vai ser usado.
 (defun tabuleiro-preenche! (tab l c)
+    (if (and (<= l 17) (<= c 9))
     (setf (aref tab (- 17 l) c) T)
+    NIL )
 )
 
 
@@ -321,4 +323,4 @@
         
         ;(load "utils.lisp")
         ;(load (compile-file "utils.lisp"))
-        (load "utils.fas")
+       (load "utils.fas")
