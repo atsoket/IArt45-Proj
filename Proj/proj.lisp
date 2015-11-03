@@ -49,7 +49,7 @@
 ;;Esta funcao verifica se uma dada posicao de um tabuleiro
 ;; esta' preenchida.
 (defun tabuleiro-preenchido-p (tab l c)
-    (aref tab l c)
+    (aref tab (- 17 l) c )
 )
 
 ;;Percorre uma dada coluna, e retorna a altura assim que encontra uma casa preenchida.
@@ -64,6 +64,7 @@
 ;;esta funcao retorna NIL, assim que encontrar uma posicao vazia.
 ;;consequentemente interrompe o ciclo, visto que deixa de ser necessa'rio.
 (defun tabuleiro-linha-completa-p (tab l)
+    (setf l (- 17 l))
    (let ((contador 0) (completo T))
         (loop while (< contador 10)  do
             (if  (equal (aref tab l contador) NIL) (progn (setf contador 10) (setf completo NIL)) (incf contador))
@@ -74,7 +75,7 @@
 ;;preenche uma posicao do tabuleiro.
 ;;NOTA: Coloquei True, pk ainda nao decidimos que valor vai ser usado.
 (defun tabuleiro-preenche! (tab l c)
-    (setf (aref tab l c) T)
+    (setf (aref tab (- 17 l) c) T)
 )
 
 
@@ -305,9 +306,11 @@
         (dotimes (linha 18)
             (dotimes (coluna 10)
                 (setf (aref taboriginal linha coluna) linha)
-            )
+            )peca-t1
         )
 )
 
         
+        ;(load "utils.lisp")
+        ;(load (compile-file "utils.lisp"))
         (load "utils.fas")

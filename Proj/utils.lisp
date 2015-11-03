@@ -141,17 +141,18 @@
 (dotimes (coluna 9)
   (tabuleiro-preenche! t1 0 coluna))
   
-(desenha-linha-exterior)  
+
 (dotimes (coluna 9)
   (tabuleiro-preenche! t1 1 coluna))
-  
-(dotimes (linha 18)
+
+(desenha-linha-exterior)  
+(dolist (linha '(17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0))
   (desenha-linha t1 linha)
 )  
 (desenha-linha-exterior)  
 (defvar e1 (make-estado :tabuleiro t0 :pecas-por-colocar '(i o j l t i)))
 ;(defvar p1 (formulacao-problema t1 '(i o j l t i)))
-(setf lista_accoes (accoes e1))
-(resultado e1 (car lista_accoes ))
+;(setf lista_accoes (accoes e1))
+;(resultado e1 (car lista_accoes ))
 
 
