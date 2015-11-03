@@ -297,7 +297,7 @@
             )
         )
         
-        ;;;verifica se há linhas preenchidas e remove-as
+        ;;;verifica se ha linhas preenchidas e remove-as
         (dotimes (_linha 18)
             (if (tabuleiro-linha-completa-p (estado-tabuleiro _estado_resultado) _linha)
                 (tabuleiro-remove-linha! _linha)
