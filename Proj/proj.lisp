@@ -116,11 +116,11 @@
     iguais)
 )
 
-(defun array-tabuleiro (arr)
+(defun array->tabuleiro (arr)
     (copia-tabuleiro arr) ;devolve tabuleiro
 )
 
-(defun tabuleiro-array (tabuleiro)
+(defun tabuleiro->array (tabuleiro)
     (copia-tabuleiro tabuleiro)
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -144,10 +144,15 @@
     (make-estado :pontos pontos :pecas-por-colocar pecas :pecas-colocadas pecasColocadas :tabuleiro tabuleiro)
 )
 
-
 (defun copia-estado (estadoCopiar)
-    (make-estado :pontos (estado-pontos estadoCopiar) :pecas-por-colocar (estado-pecas-por-colocar estadoCopiar) :pecas-colocadas (estado-pecas-colocadas estadoCopiar) :tabuleiro (estado-tabuleiro estadoCopiar))
+    (make-estado 
+    :pontos (estado-pontos estadoCopiar) 
+    :pecas-por-colocar (copy-list (estado-pecas-por-colocar estadoCopiar)) 
+    :pecas-colocadas (copy-list (estado-pecas-colocadas estadoCopiar)) 
+    :tabuleiro (copia-tabuleiro (estado-tabuleiro estadoCopiar)))
 )
+
+
 
 ;;Esta funcao recebe dois estados e devolve true caso sejam iguais, caso contrario retorna null
 
@@ -163,7 +168,7 @@
 
 
 (defun estado-final-p (estado)
-  (or (equal (estado-pecas-por-colocar estado) 0) (tabuleiro-topo-preenchido-p (estado-tabuleiro estado)))
+  (or (equal (estado-pecas-por-colocar estado) nil) (tabuleiro-topo-preenchido-p (estado-tabuleiro estado)))
 )
 
 ;;;;;;;;;;;;;;;;;
@@ -231,130 +236,121 @@
     (T (list)))
   )
 
-;(defun resultado (_estado _accao)
-;    (let ((estado_final nil) (altura_peca 0) (altura_alvo -1) (altura_coluna 0) (largura_peca 0))
-;      (progn
-          ;coloca a primeira peca da lista pecas-por-colocar na lista pecas colocadas 
-;          (push (pop (estado-pecas-por-colocar _estado)) (estado-pecas-colocadas _estado))
-
-          ;calcula a altura da peca
-;          (setf altura_peca (car (array-dimensions (cdr _accao))))
-
-          ;Calcula a altura da coluna vazia. 
-;          (setf altura_coluna (tabuleiro-altura-coluna (estado-tabuleiro _estado) (car _accao)))
-
-          ;Ca'lculo da posicao em k se comecara a escrever no tabuleiro. 
-;          (setf altura_alvo (+ (- (- 17 altura_coluna) altura_peca) 1) )
-
-          ;Ca'lculo da largura da peca
-;          (setf largura_peca (cadr (array-dimensions (cdr _accao))) )
-
-
-          ;MAX ( Altura de cada coluna d apeCa, a contar de cima  + altura da coluna) -> coluna-tabuleiro de escolha e a sua altura de desenho 
-
-          ; (print altura_coluna)
-          ; (print altura_peca)
-          ; (print altura_alvo)
-          ; (print largura_peca)
-
-          ;Verifica se a posicao da peca esta' a T, caso esteja pinta a posicao no tabuleiro.
-          ;explico melhor na segunda-feira
-
-;          (dotimes (linha_alvo altura_peca)
-;            (dotimes (coluna_alvo largura_peca)
-;                (if (aref (cdr _accao) linha_alvo coluna_alvo) (tabuleiro-preenche! (estado-tabuleiro _estado) (+ altura_alvo linha_alvo ) (+ (car _accao) coluna_alvo )) ())
-;            )
-;          )
-          
-          ;NAO ESTA' ACABADO!!! FALTA VERIFICAR SE FICOU ALGUMA LINHA CHEIA!!!
-          ;NAO ESTA' ACABADO!!! FALTA VERIFICAR SE FICOU ALGUMA LINHA CHEIA!!!
-          ;NAO ESTA' ACABADO!!! FALTA VERIFICAR SE FICOU ALGUMA LINHA CHEIA!!!
-;          (setf estado_final (copia-estado _estado))    ;nao faz sentido o estado inicial que e' dado como argumento ser alterado
-                                                        ;podemos precisar retroceder quando fizermos procuras
-                                                        ;criar estado_resultado no inicio e alterar este
-;        )
-;    estado_final)
-;  )
 
 (defun resultado (_estado _accao)
-    ; (let ( (_estado_resultado _estado) (largura_peca (array-dimensions (accao-peca _accao) 1)) (altura_peca (array-dimensions (accao-peca _accao)) 0) )
+     (let ( 
+            (_estado_resultado nil)
+            (largura_peca (array-dimension (accao-peca _accao) 1)) 
+            (altura_peca (array-dimension (accao-peca _accao) 0))
+            (peca nil)
+            (coluna_alvo -1)
+            (actual -1)
+            (col_array -1)
+            (maximus -1)
+            (linha_alvo -1)
+            (conta_pontos 0)
+          )
+          (setf _estado_resultado (copia-estado _estado))
+          (setf peca  (accao-peca _accao) )
+          (setf coluna_alvo (accao-coluna _accao))
+          
+         ;;;calcula a altura onde desenhar a peca
+         
+         ;iterar as colunas da peca + coluans do tabuleiro e somaxr
+         ;coluna peca + (coluna_alvo + coluna_peca) 
+         
+         (dotimes (c largura_peca)
+            (setf actual (+  (aux-peca-altura-coluna peca c) (tabuleiro-altura-coluna (estado-tabuleiro _estado) (+ coluna_alvo c))))
+            (if (< maximus actual) (progn (setf col_array c) (setf maximus actual)) ())
+         )
+         
+         (setf linha_alvo (- (+ (aux-peca-altura-coluna peca col_array) (tabuleiro-altura-coluna (estado-tabuleiro _estado) (+ coluna_alvo col_array))) 1))
+         
+         ;col_array = coluna CHEFE A.K.A KITAMANDA
         
-    ;     ;;;calcula a altura onde desenhar a peca
-    ;     (
-    ;     ;;;;;;;;;;;;;;;;;;;!!
-    ;     ;; dar delete nisto!
-    ;         setf linha_alvo (tabuleiro-altura-coluna (estado-tabuleiro _estado) (accao-coluna _accao))
-    ;     ;; dar delete nisto!
-    ;     ;;;;;;;;;;;;;;;;;;;!!
-    ;     )
+        ;A cada posicao do array temos a altura correspondente (a soma da altura da peca com a da coluna).
         
-    ;     ;;;desenha a peca no tabuleiro
-    ;     (dotimes (_coluna_peca largura_peca)
-    ;         (dotimes (_linha_peca altura_peca)
-    ;             (if (aref (accao-peca _accao) _linha_peca _coluna_peca)
-    ;                 (tabuleiro-preenche! (estado-tabuleiro _estado_resultado) (+ (linha_alvo) _linha_peca))
-    ;                 ()
-    ;             )
-    ;         )
-    ;     )
         
-    ;     ;;;verifica se ha linhas preenchidas e remove-as
-    ;     (dotimes (_linha 18)
-    ;         (if (tabuleiro-linha-completa-p (estado-tabuleiro _estado_resultado) _linha)
-    ;             (tabuleiro-remove-linha! _linha)
-    ;             ()
-    ;         )
-    ;     )
-    ; estado_final
-    ; )
-    (let ((_estadoresultado (list) ))
-        (push _estado _estadoresultado)
-        (push _accao _estadoresultado)
-      _estadoresultado)
+;;          ;;;desenha a peca no tabuleiro
+          (dotimes (_linha_peca altura_peca)
+            (dotimes (_coluna_peca largura_peca)             
+                 (if (aref peca _linha_peca _coluna_peca)
+                      (tabuleiro-preenche! (estado-tabuleiro _estado_resultado) (- linha_alvo _linha_peca) (+ coluna_alvo _coluna_peca))
+                      ()
+
+                 )
+             )
+         )
+         
+         (if (tabuleiro-topo-preenchido-p (estado-tabuleiro _estado_resultado))
+            _estado_resultado
+            ()
+         )
+        
+;;       ;;;verifica se ha linhas preenchidas e remove-as
+         (dotimes (_linha 18)
+              
+              (if (tabuleiro-linha-completa-p (estado-tabuleiro _estado_resultado) (- 17 _linha))
+                  (progn (tabuleiro-remove-linha! (estado-tabuleiro _estado_resultado) (- 17 _linha)) (incf conta_pontos) )
+              )
+         )         
+
+         (cond
+          ((= conta_pontos 0) ())
+          ((= conta_pontos 1) (setf (estado-pontos _estado_resultado) (+ (estado-pontos _estado_resultado) 100)) )
+          ((= conta_pontos 2) (setf (estado-pontos _estado_resultado) (+ (estado-pontos _estado_resultado) 300)) )
+          ((= conta_pontos 3) (setf (estado-pontos _estado_resultado) (+ (estado-pontos _estado_resultado) 500)) )
+          ((= conta_pontos 4) (setf (estado-pontos _estado_resultado) (+ (estado-pontos _estado_resultado) 800)) )
+         )
+         
+         (push (pop (estado-pecas-por-colocar _estado_resultado)) (estado-pecas-colocadas _estado_resultado))
+         
+      _estado_resultado
+      
+     )
+    
       
 )
 
 
-; (defun aux-peca-altura-coluna (_peca coluna)
-;     (let (  (altura (array-dimension _peca 0))   (contador (array-dimension _peca 0)) ) 
-;         (loop while (> contador 0) do
-;             (if (equal (aref _peca contador coluna) NIL)
-;                 (progn (decf altura)(decf contador))
-;                 (setf contador 0)
-;             )
-;         )
-;     altura
-;     )
-; )
+ (defun aux-peca-altura-coluna (_peca coluna)
+     (let (  (altura (array-dimension _peca 0))   (contador (array-dimension _peca 0)) )
+     
+          
+           (loop while (>= contador 0) do
+             (if (equal (aref _peca (- contador 1) coluna ) NIL)
+                 (progn (decf altura)(decf contador))
+                 (setf contador -1)
+             )
+         )
+     altura
+     )
+ )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 (defun qualidade (_estado)
-    ;(- 0 (estado-pontos _estado))
-    (let ((_estadoresultado (list) ))
-        (push _estado _estadoresultado)
-       
-      _estadoresultado)
+    (- 0 (estado-pontos _estado))
+    
 )
+
+
 
 (defun custo-oportunidade (_estado)
-    ; (let (      (custo (* (length (estado-pecas-colocadas _estado)) 300)) )
-    ;     (dolist (_peca (estado-pecas-colocadas _estado))
-    ;         (cond ;;verificar como funciona a comparacao das pecas
-    ;             ((equal (nth _peca (estado-pecas-colocadas _estado)) (or peca-j0 peca-j1 peca-j2 peca-j3 peca-l0 peca-l1 peca-l2 peca-l3)) (setf custo (+ custo 200)))
-    ;             ((equal (nth _peca (estado-pecas-colocadas _estado)) (or peca-i0 peca-i1)) (setf custo (+ custo 500)))
-    ;             ((T) ( ))
-    ;         )
-    ;     )
-    ; )
-(let ((_estadoresultado (list) ))
-        (push _estado _estadoresultado)
-  
-      _estadoresultado)
+     (let (      (custo (* (length (estado-pecas-colocadas _estado)) 300)) )
+         (dolist (_peca (estado-pecas-colocadas _estado))
+             (cond ;;verificar como funciona a comparacao das pecas
+                 ( (or (equal _peca 'j) (equal _peca 'l)) (setf custo (+ custo 200)))
+                 ( (equal _peca  'i) (setf custo (+ custo 500)))
+             )
+         )
+     (- custo (estado-pontos _estado))
+     )
 )
 
+    
 
 
 
