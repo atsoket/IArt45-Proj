@@ -150,9 +150,20 @@
   (desenha-linha t1 linha)
 )  
 (desenha-linha-exterior)  
-(defvar e1 (make-estado :tabuleiro t0 :pecas-por-colocar '(i o j l t i)))
+(defvar e1 (make-estado :tabuleiro t0 :pecas-por-colocar '(k i o j l t i)))
 ;(defvar p1 (formulacao-problema t1 '(i o j l t i)))
 ;(setf lista_accoes (accoes e1))
 ;(resultado e1 (car lista_accoes ))
+
+
+
+
+
+
+
+
+
+
+
 
 

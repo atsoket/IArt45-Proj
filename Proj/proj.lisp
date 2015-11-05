@@ -6,6 +6,8 @@
 ;;;;;;;;;;;;;;
 ;;TIPO ACCAO;;
 ;;;;;;;;;;;;;;
+
+
 (defun cria-accao (cole apecas)
     (cons cole apecas)
 )
@@ -15,7 +17,7 @@
 )
 
 (defun accao-peca (acc)
-    (cdr acc) 
+    (cdr acc)
 )
 
 
@@ -56,7 +58,10 @@
 (defun tabuleiro-altura-coluna (tab c)
     (let ((altura 18) (contador 0))
         (loop while (< contador 18)  do
-            (if  (equal (aref tab contador c) NIL) (progn (decf altura) (incf contador)) (setf contador 18)) ;(setf contador 18)
+            (if (equal (aref tab contador c) NIL)
+                (progn (decf altura) (incf contador))
+                (setf contador 18)
+            )
         )
     altura)
 )
@@ -65,19 +70,25 @@
 ;;consequentemente interrompe o ciclo, visto que deixa de ser necessa'rio.
 (defun tabuleiro-linha-completa-p (tab l)
     (setf l (- 17 l))
-   (let ((contador 0) (completo T))
+    (let (
+          (contador 0)
+          (completo T))
         (loop while (< contador 10)  do
-            (if  (equal (aref tab l contador) NIL) (progn (setf contador 10) (setf completo NIL)) (incf contador))
-        )
+            (if (equal (aref tab l contador) NIL)
+                    (progn (setf contador 10) (setf completo NIL))
+                    (incf contador)
+            )
+    )
     completo)
 )
 
 ;;preenche uma posicao do tabuleiro.
-;;NOTA: Coloquei True, pk ainda nao decidimos que valor vai ser usado.
+
 (defun tabuleiro-preenche! (tab l c)
-    (if (and (<= l 17) (<= c 9))
-    (setf (aref tab (- 17 l) c) T)
-    NIL )
+    (if (and (<= l 17) (<= c 9) )
+        (setf (aref tab (- 17 l ) c) T)
+        NIL
+    )
 )
 
 
@@ -106,7 +117,6 @@
 ;;Esta fucnao, compara posicao a posicao dois tabuleiros,
 ;;se todos os valores forem iguais, retorna True.
 (defun tabuleiros-iguais-p (tab1 tab2)
-
     (let ((iguais T))
         (dotimes (linha 18)
             (dotimes (coluna 10)
@@ -163,7 +173,6 @@
    (equal (estado-pecas-colocadas estado1) (estado-pecas-colocadas estado2))
    (tabuleiros-iguais-p (estado-tabuleiro estado1) (estado-tabuleiro estado2))
   )
-
 )
 
 
@@ -191,7 +200,6 @@
     (custo-caminho)    
 )
 
-
 ; ;;;;;;;;;;;;;
 ; ;; FUNCOES ;;
 ; ;;;;;;;;;;;;;
@@ -200,29 +208,27 @@
     (and (not (tabuleiro-topo-preenchido-p (estado-tabuleiro _estado))) (equal (estado-pecas-por-colocar _estado) nil))      
 )
 
-;;Coisas para n me esquecer
-;(car (estado-pecas-por-colocar _estado)) ;Devolve a primeira peca
-;(cdr (array-dimensions peca-i1)) -> Comprimento horizontal da peca
-;(push 'accao lista_accoes) ;Adiciona uma accao 'a lista de accoes
-
 ;;;Funcao: accoes
 ;;;lista_accoes->Lista que vai guardar as accoes possiveis de realizar
-;;;largura_peca->Aquando do teste de cada peca, e' calculado o tamanho horizontal da mesma.(1x por cada peca)
-;;;peca_actual->E' o primeiro elemento da lista de pecas
-;;;lista_pecas-> Esta lista e' preenchida com as pecas correspondentes, dadas pelo professor.
+;;;dim->guarda o numero de pecas a serem usadas
+;;;lista_pecas->Lista que contem as pecas a serem testadas
 
 (defun accoes (_estado)
-    (let ( (lista_accoes (list)) (largura_peca 0) (peca_actual nil) (lista_pecas (escolhe_peca (car (estado-pecas-por-colocar _estado)))) ) ;O lista_pecas fica com as pecas definidas no utils pelo professor.     
-        (dotimes (elementosFalta (list-length lista_pecas)) ;Este dotimes e' em quantidade igual a' das pecas
-            (setf peca_actual (pop lista_pecas))  ;peca_actual -> primeira da lista
-            (setf largura_peca (cadr (array-dimensions peca_actual) )) ;E' calculada a largura da peca
-            (dotimes (coluna 10)
-               (if (<= (+ coluna largura_peca ) 10) (push (cria-accao coluna peca_actual) lista_accoes) (setf coluna 10)) ;Para cada coluna e' verificado se a peca cabe la'
-                ;devo conseguir melhorar isto
-            )
+    (let ( (lista_accoes (list))
+           (lista_pecas (escolhe_peca (car (estado-pecas-por-colocar _estado))))
+          )    
+          (dolist (peca_actual lista_pecas)   ;;itera a lista de pecas a testar
+
+              (setf limite (- 11 (array-dimension peca_actual 1))) ;;calculo da ultima coluna aonde e' possivel inserir a peca
+
+              (dotimes (coluna limite)
+                  (push (cria-accao coluna peca_actual) lista_accoes)   ;;adiciona o par accao a' lista de accoes possiveis
+              )
           )
-    (reverse lista_accoes))
+          (reverse lista_accoes)
+    )
 )
+
 
 (defun escolhe_peca (_letra)
     (cond
@@ -234,7 +240,7 @@
       ((equal _letra 'z) (list peca-z0 peca-z1) )
       ((equal _letra 't) (list peca-t0 peca-t1 peca-t2 peca-t3) )
     (T (list)))
-  )
+)
 
 
 (defun resultado (_estado _accao)
@@ -314,9 +320,7 @@
 
 
  (defun aux-peca-altura-coluna (_peca coluna)
-     (let (  (altura (array-dimension _peca 0))   (contador (array-dimension _peca 0)) )
-     
-          
+     (let (  (altura (array-dimension _peca 0))   (contador (array-dimension _peca 0)) )          
            (loop while (>= contador 0) do
              (if (equal (aref _peca (- contador 1) coluna ) NIL)
                  (progn (decf altura)(decf contador))
@@ -336,8 +340,6 @@
     
 )
 
-
-
 (defun custo-oportunidade (_estado)
      (let (      (custo (* (length (estado-pecas-colocadas _estado)) 300)) )
          (dolist (_peca (estado-pecas-colocadas _estado))
@@ -349,17 +351,6 @@
      (- custo (estado-pontos _estado))
      )
 )
-
-    
-
-
-
-
-
-
-
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -395,3 +386,4 @@
         ;(load "utils.lisp")
         ;(load (compile-file "utils.lisp"))
        (load "utils.fas")
+
