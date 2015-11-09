@@ -126,17 +126,32 @@
     iguais)
 )
 
-(defun array->tabuleiro (arr)
-    (copia-tabuleiro arr) ;devolve tabuleiro
+(defun array->tabuleiro (tabuleiro)
+    (let ((tabnovo (make-array '(18 10)) ))
+        (dotimes (linha 18)
+            (dotimes (coluna 10)
+                (if (tabuleiro-preenchido-p tabuleiro linha coluna)
+                    (tabuleiro-preenche! tabnovo (- 17 linha) coluna)
+                    ()
+                )
+            )
+        )
+    tabnovo)
 )
 
 (defun tabuleiro->array (tabuleiro)
-    (copia-tabuleiro tabuleiro)
+    ;(copia-tabuleiro tabuleiro)
+     (let ((tabnovo (make-array '(18 10)) ))
+        (dotimes (linha 18)
+            (dotimes (coluna 10)
+                (if (tabuleiro-preenchido-p tabuleiro linha coluna)
+                    (tabuleiro-preenche! tabnovo (- 17 linha) coluna)
+                    ()
+                )
+            )
+        )
+    tabnovo)
 )
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;(defun tabuleiro->array (tabuleiro) ())
-;(defun array->tabuleiro (array) ())
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ;;;;;;;;;;;;;;;
@@ -210,12 +225,12 @@
 
 ;;;Funcao: accoes
 ;;;lista_accoes->Lista que vai guardar as accoes possiveis de realizar
-;;;dim->guarda o numero de pecas a serem usadas
 ;;;lista_pecas->Lista que contem as pecas a serem testadas
-
+;;;limite->ultima coluna aonde e' possivel inserir a peca
 (defun accoes (_estado)
     (let ( (lista_accoes (list))
            (lista_pecas (escolhe_peca (car (estado-pecas-por-colocar _estado))))
+           (limite 0)
           )    
           (dolist (peca_actual lista_pecas)   ;;itera a lista de pecas a testar
 
@@ -280,7 +295,7 @@
 ;;          ;;;desenha a peca no tabuleiro
           (dotimes (_linha_peca altura_peca)
             (dotimes (_coluna_peca largura_peca)             
-                 (if (aref peca _linha_peca _coluna_peca)
+                 (if (aref peca (- (- altura_peca 1) _linha_peca) _coluna_peca)
                       (tabuleiro-preenche! (estado-tabuleiro _estado_resultado) (- linha_alvo _linha_peca) (+ coluna_alvo _coluna_peca))
                       ()
 
@@ -319,14 +334,31 @@
 )
 
 
+ ; (defun aux-peca-altura-coluna (_peca coluna)
+ ;     (let (  (altura (array-dimension _peca 0))   (contador (array-dimension _peca 0)) )          
+ ;           (loop while (>= contador 0) do
+ ;             (if (equal (aref _peca (- contador 1) coluna ) NIL)
+ ;                 (progn (decf altura)(decf contador))
+ ;                 (setf contador -1)
+ ;             )
+ ;         )
+ ;     altura
+ ;     )
+ ; )
+
  (defun aux-peca-altura-coluna (_peca coluna)
      (let (  (altura (array-dimension _peca 0))   (contador (array-dimension _peca 0)) )          
-           (loop while (>= contador 0) do
-             (if (equal (aref _peca (- contador 1) coluna ) NIL)
-                 (progn (decf altura)(decf contador))
-                 (setf contador -1)
-             )
-         )
+           ; (loop while (>= contador 0) do
+           ;   (if (equal (aref _peca (- contador 1) coluna ) NIL)
+           ;       (progn (decf altura)(decf contador))
+           ;       (setf contador -1)
+           ;   )
+          (dotimes (altura_coluna contador)
+              (if (equal (aref _peca altura_coluna coluna) NIL)
+                (decf altura)
+                ())
+          )
+
      altura
      )
  )
@@ -386,4 +418,5 @@
         ;(load "utils.lisp")
         ;(load (compile-file "utils.lisp"))
        (load "utils.fas")
+
 
