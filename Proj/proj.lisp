@@ -3,6 +3,12 @@
 ;Filipe Fernandes - 73253
 ;Grupo 16
 
+;http://aima.cs.berkeley.edu/lisp/doc/overview-SEARCH.html#search/algorithms/minimax.lisp
+;https://www.cs.unm.edu/~luger/ai-final/code/LISP.depth.html
+;https://www.cs.unm.edu/~luger/ai-final/code/LISP.fwgc.html
+
+
+
 ;;;;;;;;;;;;;;
 ;;TIPO ACCAO;;
 ;;;;;;;;;;;;;;
@@ -420,3 +426,230 @@
        (load "utils.fas")
 
 
+       ;;;
+       ;;;2a parte
+       ;;;
+
+;;; For example, to run depth first search with the farmer, wolf, 
+;;; goat, etc. problem, evaluate the definitions found in the file 
+;;; farmer_wolf_etc_rules_only, and evaluate:
+;
+;     (run-depth-first '(e e e e) '(w w w w) '(farmer-takes-self farmer-takes-wolf farmer-takes-goat farmer-takes-cabbage))
+;
+
+
+(defun depth-first-search (start goal been-list moves)
+  (cond ((equal start goal) 
+         (reverse (cons start been-list)))
+        (t (try-moves start goal been-list moves moves))))
+        
+;; (defun run-pp-search (_problema _listinha)
+;;   (cond ((funcall (problema-solucao _problema) (problema-estado-inicial _problema))
+;;           (reverse _listinha))
+;;         (t (try-moves-feira _problema (funcall (problema-accoes _problema) (problema-estado-inicial _problema)) _listinha)))
+;;         )
+
+
+;; (defun try-moves-feira (_problema moves-to-try _listinha)
+;;     (cond ((null moves-to-try) nil)
+;;           (t (let ((child (funcall (problema-resultado _problema) (problema-estado-inicial _problema) (car moves-to-try))))
+;;                 (if child 
+;;                   (or (depth-first-search _problema (funcall (problema-resultado _problema) (problema-estado-inicial _problema) (car moves-to-try)) _listinha moves)
+;;                       (try-moves-feira _problema _listinha (cdr moves-to-try) moves))
+;;                   (try-moves-feira _problema _listinha (cdr moves-to-try) moves))
+;;               )
+;;           )
+;;     )
+;; )
+
+
+; Try-moves scans down the list of moves in moves-to-try, 
+; attempting to generate a child state.  If it produces 
+; this state, it calls depth-first-search to complete the search.
+
+(defun try-moves (start goal been-list moves-to-try moves)
+  (cond ((null moves-to-try) nil)
+        ((member start been-list :test #'equal) nil)
+        (t (let ((child (funcall (car moves-to-try) start)))
+             (if child 
+               (or (depth-first-search (funcall (car moves-to-try) start)
+                                       goal
+                                       (cons start been-list)
+                                       moves)
+                   (try-moves start goal been-list (cdr moves-to-try) moves))
+               (try-moves start goal been-list (cdr moves-to-try) moves))))))
+
+               
+; run-depth-first calls depth-first-search, initializing the been-list to ().
+(defun run-depth-first (start goal moves)
+  (depth-first-search start goal () moves))
+       
+;; (defun run-pp-first (_problema)
+;;   (run-pp-search _problema ())
+;; )       
+;;      
+;;      
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+       (defun solve-fwgc (state goal) (path state goal nil))
+
+
+;;; The recursive path algorithm searches the space in a depth first 
+;;; fashion.
+
+(defun path (state goal been-list)
+   (cond ((null state) nil)
+         ((equal state goal) (reverse (cons state been-list)))
+         ((not (member state been-list :test #'equal))
+              (or (path (farmer-takes-self state) goal (cons state been-list))
+                  (path (farmer-takes-wolf state) goal (cons state been-list))
+                  (path (farmer-takes-goat state) goal (cons state been-list))
+                  (path (farmer-takes-cabbage state) goal (cons state been-list))))))
+
+
+;;; These functions define legal moves in the state space.  The take
+;;; a state as argument, and return the state produced by that operation.
+
+(defun farmer-takes-self (state)
+   (safe (make-state (opposite (farmer-side state))
+                (wolf-side state)
+                (goat-side state)
+                (cabbage-side state))))
+
+
+(defun farmer-takes-wolf (state)
+   (cond ((equal (farmer-side state) (wolf-side state))
+                     (safe (make-state (opposite (farmer-side state))
+                                                (opposite (wolf-side state))
+                                                (goat-side state)
+                                                (cabbage-side state))))
+            (t nil)))
+
+(defun farmer-takes-goat (state)
+   (cond ((equal (farmer-side state) (goat-side state))
+                  (safe (make-state (opposite (farmer-side state))
+                                             (wolf-side state)
+                                             (opposite (goat-side state))
+                                             (cabbage-side state)))) 
+            (t nil)))
+
+(defun farmer-takes-cabbage (state)
+   (cond ((equal (farmer-side state) (cabbage-side state))
+                    (safe (make-state (opposite (farmer-side state))
+                                               (wolf-side state)
+                                               (goat-side state)
+                                               (opposite (cabbage-side state)))))   
+           (t nil)))
+
+
+
+;;; These functions define states of the world
+;;; as an abstract data type.
+
+(defun make-state (f w g c) (list f w g c))
+
+(defun farmer-side ( state )
+   (nth 0 state))
+
+(defun wolf-side ( state )
+   (nth 1 state))
+
+(defun goat-side ( state )
+   (nth 2 state))
+
+(defun cabbage-side ( state )
+   (nth 3 state))
+
+;;; The function "opposite" takes a side and returns the opposite
+;;; side of the river.
+
+(defun opposite (side)
+   (cond ((equal side 'e) 'w)
+             ((equal side 'w) 'e)))
+
+;;; Safe returns nil if a state is not safe; it returns the state unchanged
+;;; if it is safe.
+
+(defun safe (state)
+   (cond ((and (equal (goat-side state) (wolf-side state))
+                     (not (equal (farmer-side state) (wolf-side state))))  nil)
+            ((and (equal (goat-side state) (cabbage-side state))
+                     (not (equal (farmer-side state) (goat-side state)))) nil)
+           (t state)))
+
+       
+       
+       
