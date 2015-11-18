@@ -212,7 +212,8 @@
     (solucao) 
     (accoes)
     (resultado)
-    (custo-caminho)    
+    (custo-caminho)
+    (caminho ()) ; ***NOVO*** -> onde atualizar o caminho?
 )
 
 ; ;;;;;;;;;;;;;
@@ -271,6 +272,9 @@
             (linha_alvo -1)
             (conta_pontos 0)
           )
+          
+          
+          
           (setf _estado_resultado (copia-estado _estado))
           (setf peca  (accao-peca _accao) )
           (setf coluna_alvo (accao-coluna _accao))
@@ -384,6 +388,35 @@
      )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;; PROCURAS
+
+
+
+
+(defun ppp(_problema)
+    (cond 
+        ((solucao (problema-estado _problema)) (problema-caminho _problema)) ;se o no' e' solucao, devolve o caminho: novo campo na estrutura problema
+        ((estado-final-p (problema-estado _problema)) () ) ;se e' estado final, nao faz nada e continua a procura (nota que a procura e' recursiva)
+        (t
+            (dolist (_accao (problema-accoes _problema))
+                (ppp (sucessor (_problema _accao)))
+            )
+        )
+    )
+)
+
+(defun sucessor (_no _arco) ; cria um novo problema em que o estado inicial é o sucessor do no', e que contem o caminho ate' o novo problema
+    (make-problema
+        :estado-inicial (resultado (problema-estado _no) _arco)
+        :caminho (cons (problema-caminho _no) _arco)
+    )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
