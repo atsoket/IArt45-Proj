@@ -232,7 +232,17 @@
     (let ( (lista_accoes (list))
            (lista_pecas (escolhe_peca (car (estado-pecas-por-colocar _estado))))
            (limite 0)
-          )    
+          )
+          ; (cond 
+          ;   ((estado-final-p _estado) (format T "ENTROU mal"))
+          ;   ( (not (estado-pecas-por-colocar  _estado)) (format T "ENTROU"))
+          ;   (T '(skdjsjfskaljskaljkalaj))
+          ;   )    
+
+          ; (if (not (estado-pecas-por-colocar  _estado))  (format T "lolol") (format T "lelelelelle") )
+        
+
+
           (dolist (peca_actual lista_pecas)   ;;itera a lista de pecas a testar
 
               (setf limite (- 11 (array-dimension peca_actual 1))) ;;calculo da ultima coluna aonde e' possivel inserir a peca
@@ -241,6 +251,9 @@
                   (push (cria-accao coluna peca_actual) lista_accoes)   ;;adiciona o par accao a' lista de accoes possiveis
               )
           )
+            (cond 
+              ( (estado-final-p _estado) (setf lista_accoes '()))
+            )
           (reverse lista_accoes)
     )
 )
@@ -295,7 +308,7 @@
         
         ;A cada posicao do array temos a altura correspondente (a soma da altura da peca com a da coluna).
         
-        
+    
 ;;          ;;;desenha a peca no tabuleiro
           (dotimes (_linha_peca altura_peca)
             (dotimes (_coluna_peca largura_peca)             
@@ -338,34 +351,36 @@
 )
 
 
- ; (defun aux-peca-altura-coluna (_peca coluna)
- ;     (let (  (altura (array-dimension _peca 0))   (contador (array-dimension _peca 0)) )          
- ;           (loop while (>= contador 0) do
- ;             (if (equal (aref _peca (- contador 1) coluna ) NIL)
- ;                 (progn (decf altura)(decf contador))
- ;                 (setf contador -1)
- ;             )
- ;         )
- ;     altura
- ;     )
- ; )
-
  (defun aux-peca-altura-coluna (_peca coluna)
-     (let (  (altura (array-dimension _peca 0))   (contador (array-dimension _peca 0)) )          
-           ; (loop while (>= contador 0) do
-           ;   (if (equal (aref _peca (- contador 1) coluna ) NIL)
-           ;       (progn (decf altura)(decf contador))
-           ;       (setf contador -1)
-           ;   )
-          (dotimes (altura_coluna contador)
-              (if (equal (aref _peca altura_coluna coluna) NIL)
-                (decf altura)
-                ())
-          )
-
+     (let (  (altura (array-dimension _peca 0))   (contador 0) )          
+           (loop while (<= contador (array-dimension _peca 0) ) do
+             (if (equal (aref _peca contador coluna ) nil)
+                 (progn (decf altura) (incf contador))
+                 (setf contador 18)
+             )
+         )
      altura
      )
  )
+
+
+
+ ; (defun aux-peca-altura-coluna (_peca coluna)
+ ;     (let (  (altura (array-dimension _peca 0))   (contador (array-dimension _peca 0)) )          
+ ;           ; (loop while (>= contador 0) do
+ ;           ;   (if (equal (aref _peca (- contador 1) coluna ) NIL)
+ ;           ;       (progn (decf altura)(decf contador))
+ ;           ;       (setf contador -1)
+ ;           ;   )
+ ;          (dotimes (altura_coluna contador)
+ ;              (if (equal (aref _peca altura_coluna coluna) NIL)
+ ;                (decf altura)
+ ;                ())
+ ;          )
+
+ ;     altura
+ ;     )
+ ; )
 
 ;; ;; ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -397,24 +412,75 @@
 
 
 
-(defun ppp(_problema)
-    (cond 
-        ((solucao (problema-estado _problema)) (problema-caminho _problema)) ;se o no' e' solucao, devolve o caminho: novo campo na estrutura problema
-        ((estado-final-p (problema-estado _problema)) () ) ;se e' estado final, nao faz nada e continua a procura (nota que a procura e' recursiva)
+; (defun procura-pp(_problema)
+;   (print (problema-estado-inicial _problema))
+;     (cond 
+;         ((solucao (problema-estado-inicial _problema)) (problema-caminho _problema)) ;se o no' e' solucao, devolve o caminho: novo campo na estrutura problema
+;         ((estado-final-p (problema-estado-inicial _problema)) () ) ;se e' estado final, nao faz nada e continua a procura (nota que a procura e' recursiva)
+;         (t
+;              (dolist (_accao (accoes (problema-estado-inicial _problema)))
+;                 (procura-pp (sucessor _problema _accao))
+;                 ;(print _accao)
+;             )
+;         )
+;     )
+; )
+
+; (defun sucessor (_no _arco) ; cria um novo problema em que o estado inicial e' o sucessor do no', e que contem o caminho ate' o novo problema
+;      (format T "hello")
+;     ; (make-problema
+;     ;     :estado-inicial (resultado (problema-estado-inicial _no) _arco)
+;     ;     :caminho (cons (problema-caminho _no) _arco)
+;     ; )
+;     (let ( 
+;             (_estado_resultado nil)
+;           )
+;           (setf _estado_resultado (copia-estado (problema-estado-inicial _no)))
+;           (setf (problema-estado-inicial _no) (resultado _estado_resultado _arco))
+;           _no
+;     )
+; )
+
+(defun procura-pp (_problema)
+  (reverse (procura-pp-inicial _problema (problema-estado-inicial _problema) (list)))
+  ; (let ((listinha (list)))
+  ; (push (estado-pecas-por-colocar (problema-estado-inicial _problema)) listinha)
+  ; (dotimes (capa 10)
+  ;   (push (tabuleiro-altura-coluna (estado-tabuleiro (problema-estado-inicial _problema)) capa) listinha) )
+  ; listinha)
+)
+
+
+(defun procura-pp-inicial (_problema _estado _caminho)
+  ;(print _estado)
+    (cond
+        ;((solucao _estado) _caminho) ;se o no' e' solucao, devolve o caminho: novo campo na estrutura problema
+        ((funcall (problema-solucao _problema) _estado) _caminho) ;se o no' e' solucao, devolve o caminho: novo campo na estrutura problema
+      ;  ((estado-final-p _estado) nil ) ;se e' estado final, nao faz nada e continua a procura (nota que a procura e' recursiva)
         (t
-            (dolist (_accao (problema-accoes _problema))
-                (ppp (sucessor (_problema _accao)))
-            )
+           ; (sucessor_recursivo _problema _estado _caminho  (reverse (accoes _estado)))
+             (sucessor_recursivo _problema _estado _caminho  (reverse (funcall (problema-accoes _problema) _estado)))
+
         )
     )
 )
 
-(defun sucessor (_no _arco) ; cria um novo problema em que o estado inicial é o sucessor do no', e que contem o caminho ate' o novo problema
-    (make-problema
-        :estado-inicial (resultado (problema-estado _no) _arco)
-        :caminho (cons (problema-caminho _no) _arco)
-    )
-)
+(defun sucessor_recursivo (_problema _estado _caminho _movimentos)
+
+          (cond ((null _movimentos) nil)
+          ;  (T (let (  (filho (funcall (problema-resultado _problema) (copia-estado _estado) (car _movimentos)) ) )
+              (T (let (  (filho (funcall (problema-resultado _problema) _estado (car _movimentos)) ) )
+                  (if filho
+                    (or (procura-pp-inicial _problema filho (push (car _movimentos) _caminho))
+                        (sucessor_recursivo _problema _estado (cdr _caminho) (cdr _movimentos)) ) ;Falso
+                    (sucessor_recursivo _problema _estado (cdr _caminho) (cdr _movimentos)))))
+                                                
+              )
+          )
+  
+
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
