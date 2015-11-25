@@ -213,7 +213,6 @@
     (accoes)
     (resultado)
     (custo-caminho)
-    (caminho ()) ; ***NOVO*** -> onde atualizar o caminho?
 )
 
 ; ;;;;;;;;;;;;;
@@ -233,16 +232,6 @@
            (lista_pecas (escolhe_peca (car (estado-pecas-por-colocar _estado))))
            (limite 0)
           )
-          ; (cond 
-          ;   ((estado-final-p _estado) (format T "ENTROU mal"))
-          ;   ( (not (estado-pecas-por-colocar  _estado)) (format T "ENTROU"))
-          ;   (T '(skdjsjfskaljskaljkalaj))
-          ;   )    
-
-          ; (if (not (estado-pecas-por-colocar  _estado))  (format T "lolol") (format T "lelelelelle") )
-        
-
-
           (dolist (peca_actual lista_pecas)   ;;itera a lista de pecas a testar
 
               (setf limite (- 11 (array-dimension peca_actual 1))) ;;calculo da ultima coluna aonde e' possivel inserir a peca
@@ -404,43 +393,8 @@
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
 ;;; PROCURAS
-
-
-
-
-; (defun procura-pp(_problema)
-;   (print (problema-estado-inicial _problema))
-;     (cond 
-;         ((solucao (problema-estado-inicial _problema)) (problema-caminho _problema)) ;se o no' e' solucao, devolve o caminho: novo campo na estrutura problema
-;         ((estado-final-p (problema-estado-inicial _problema)) () ) ;se e' estado final, nao faz nada e continua a procura (nota que a procura e' recursiva)
-;         (t
-;              (dolist (_accao (accoes (problema-estado-inicial _problema)))
-;                 (procura-pp (sucessor _problema _accao))
-;                 ;(print _accao)
-;             )
-;         )
-;     )
-; )
-
-; (defun sucessor (_no _arco) ; cria um novo problema em que o estado inicial e' o sucessor do no', e que contem o caminho ate' o novo problema
-;      (format T "hello")
-;     ; (make-problema
-;     ;     :estado-inicial (resultado (problema-estado-inicial _no) _arco)
-;     ;     :caminho (cons (problema-caminho _no) _arco)
-;     ; )
-;     (let ( 
-;             (_estado_resultado nil)
-;           )
-;           (setf _estado_resultado (copia-estado (problema-estado-inicial _no)))
-;           (setf (problema-estado-inicial _no) (resultado _estado_resultado _arco))
-;           _no
-;     )
-; )
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun procura-pp (_problema)
   (reverse (procura-pp-inicial _problema (problema-estado-inicial _problema) (list)))
   ; (let ((listinha (list)))
@@ -478,8 +432,58 @@
               )
           )
   
+(defun procura-A* (_problema _heuristica)
+        (let  (
+                (best 99999)
+                (caminho (list) )
+                (actual 0)
+                (_estado (problema-estado-inicial _problema))
+                (_estado_resultado nil)
+                (_resultadoaux nil)
+                (_accaoaux nil )
+                (_accoes nil)
+                (_semsolucao t)
+                (_custo 0)
+                )
+                
+               (loop while (and (not (solucao _estado)) _semsolucao) do
+                (format T "---------------------------------------------")
+                (format T "---------------------------------------------")
+                        (setf _accoes (funcall (problema-accoes _problema) _estado))
+               
+                        
+                
+                        (dolist (_accao  _accoes)
+                                (setf _resultadoaux (funcall (problema-resultado _problema)  _estado _accao))
+                               ;(setf actual (+ (- 0 (qualidade _resultadoaux)) (funcall _heuristica  _resultadoaux)))
+                               
+                               (setf _custo (funcall (problema-custo-caminho _problema) _resultadoaux))
+                               (print  _custo )
 
-
+                               (setf actual (+  _custo (funcall _heuristica  _resultadoaux)))
+                               
+                                (format T "Actual: ")
+                                (print actual)
+                                 (format T "~%Accao: ")
+                                (print _accao)
+                                (print (estado-tabuleiro _resultadoaux))
+                                (format T "~%----------------~%")
+                                (if (<= actual best)
+                                        (progn (setf best actual)  (setf _estado_resultado (copia-estado  _resultadoaux)) (setf _accaoaux _accao))
+                                        ()
+                                )
+                        )
+                        
+                        (setf _estado (copia-estado _estado_resultado))
+                        (push _accaoaux caminho)
+  
+                        (cond ((null _accoes) (setf _semsolucao nil) (setf caminho nil))
+                          (T ()))
+                )
+        (reverse caminho)
+        )
+)
+;(procura-A* meu #'(lambda (x) 0))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
