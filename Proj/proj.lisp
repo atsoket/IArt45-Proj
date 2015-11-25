@@ -3,12 +3,6 @@
 ;Filipe Fernandes - 73253
 ;Grupo 16
 
-;http://aima.cs.berkeley.edu/lisp/doc/overview-SEARCH.html#search/algorithms/minimax.lisp
-;https://www.cs.unm.edu/~luger/ai-final/code/LISP.depth.html
-;https://www.cs.unm.edu/~luger/ai-final/code/LISP.fwgc.html
-
-
-
 ;;;;;;;;;;;;;;
 ;;TIPO ACCAO;;
 ;;;;;;;;;;;;;;
@@ -218,7 +212,8 @@
     (solucao) 
     (accoes)
     (resultado)
-    (custo-caminho)    
+    (custo-caminho)
+    (caminho ()) ; ***NOVO*** -> onde atualizar o caminho?
 )
 
 ; ;;;;;;;;;;;;;
@@ -237,7 +232,17 @@
     (let ( (lista_accoes (list))
            (lista_pecas (escolhe_peca (car (estado-pecas-por-colocar _estado))))
            (limite 0)
-          )    
+          )
+          ; (cond 
+          ;   ((estado-final-p _estado) (format T "ENTROU mal"))
+          ;   ( (not (estado-pecas-por-colocar  _estado)) (format T "ENTROU"))
+          ;   (T '(skdjsjfskaljskaljkalaj))
+          ;   )    
+
+          ; (if (not (estado-pecas-por-colocar  _estado))  (format T "lolol") (format T "lelelelelle") )
+        
+
+
           (dolist (peca_actual lista_pecas)   ;;itera a lista de pecas a testar
 
               (setf limite (- 11 (array-dimension peca_actual 1))) ;;calculo da ultima coluna aonde e' possivel inserir a peca
@@ -246,6 +251,9 @@
                   (push (cria-accao coluna peca_actual) lista_accoes)   ;;adiciona o par accao a' lista de accoes possiveis
               )
           )
+            (cond 
+              ( (estado-final-p _estado) (setf lista_accoes '()))
+            )
           (reverse lista_accoes)
     )
 )
@@ -277,6 +285,9 @@
             (linha_alvo -1)
             (conta_pontos 0)
           )
+          
+          
+          
           (setf _estado_resultado (copia-estado _estado))
           (setf peca  (accao-peca _accao) )
           (setf coluna_alvo (accao-coluna _accao))
@@ -297,7 +308,7 @@
         
         ;A cada posicao do array temos a altura correspondente (a soma da altura da peca com a da coluna).
         
-        
+    
 ;;          ;;;desenha a peca no tabuleiro
           (dotimes (_linha_peca altura_peca)
             (dotimes (_coluna_peca largura_peca)             
@@ -340,34 +351,36 @@
 )
 
 
- ; (defun aux-peca-altura-coluna (_peca coluna)
- ;     (let (  (altura (array-dimension _peca 0))   (contador (array-dimension _peca 0)) )          
- ;           (loop while (>= contador 0) do
- ;             (if (equal (aref _peca (- contador 1) coluna ) NIL)
- ;                 (progn (decf altura)(decf contador))
- ;                 (setf contador -1)
- ;             )
- ;         )
- ;     altura
- ;     )
- ; )
-
  (defun aux-peca-altura-coluna (_peca coluna)
-     (let (  (altura (array-dimension _peca 0))   (contador (array-dimension _peca 0)) )          
-           ; (loop while (>= contador 0) do
-           ;   (if (equal (aref _peca (- contador 1) coluna ) NIL)
-           ;       (progn (decf altura)(decf contador))
-           ;       (setf contador -1)
-           ;   )
-          (dotimes (altura_coluna contador)
-              (if (equal (aref _peca altura_coluna coluna) NIL)
-                (decf altura)
-                ())
-          )
-
+     (let (  (altura (array-dimension _peca 0))   (contador 0) )          
+           (loop while (<= contador (array-dimension _peca 0) ) do
+             (if (equal (aref _peca contador coluna ) nil)
+                 (progn (decf altura) (incf contador))
+                 (setf contador 18)
+             )
+         )
      altura
      )
  )
+
+
+
+ ; (defun aux-peca-altura-coluna (_peca coluna)
+ ;     (let (  (altura (array-dimension _peca 0))   (contador (array-dimension _peca 0)) )          
+ ;           ; (loop while (>= contador 0) do
+ ;           ;   (if (equal (aref _peca (- contador 1) coluna ) NIL)
+ ;           ;       (progn (decf altura)(decf contador))
+ ;           ;       (setf contador -1)
+ ;           ;   )
+ ;          (dotimes (altura_coluna contador)
+ ;              (if (equal (aref _peca altura_coluna coluna) NIL)
+ ;                (decf altura)
+ ;                ())
+ ;          )
+
+ ;     altura
+ ;     )
+ ; )
 
 ;; ;; ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -390,6 +403,86 @@
      )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;; PROCURAS
+
+
+
+
+; (defun procura-pp(_problema)
+;   (print (problema-estado-inicial _problema))
+;     (cond 
+;         ((solucao (problema-estado-inicial _problema)) (problema-caminho _problema)) ;se o no' e' solucao, devolve o caminho: novo campo na estrutura problema
+;         ((estado-final-p (problema-estado-inicial _problema)) () ) ;se e' estado final, nao faz nada e continua a procura (nota que a procura e' recursiva)
+;         (t
+;              (dolist (_accao (accoes (problema-estado-inicial _problema)))
+;                 (procura-pp (sucessor _problema _accao))
+;                 ;(print _accao)
+;             )
+;         )
+;     )
+; )
+
+; (defun sucessor (_no _arco) ; cria um novo problema em que o estado inicial e' o sucessor do no', e que contem o caminho ate' o novo problema
+;      (format T "hello")
+;     ; (make-problema
+;     ;     :estado-inicial (resultado (problema-estado-inicial _no) _arco)
+;     ;     :caminho (cons (problema-caminho _no) _arco)
+;     ; )
+;     (let ( 
+;             (_estado_resultado nil)
+;           )
+;           (setf _estado_resultado (copia-estado (problema-estado-inicial _no)))
+;           (setf (problema-estado-inicial _no) (resultado _estado_resultado _arco))
+;           _no
+;     )
+; )
+
+(defun procura-pp (_problema)
+  (reverse (procura-pp-inicial _problema (problema-estado-inicial _problema) (list)))
+  ; (let ((listinha (list)))
+  ; (push (estado-pecas-por-colocar (problema-estado-inicial _problema)) listinha)
+  ; (dotimes (capa 10)
+  ;   (push (tabuleiro-altura-coluna (estado-tabuleiro (problema-estado-inicial _problema)) capa) listinha) )
+  ; listinha)
+)
+
+
+(defun procura-pp-inicial (_problema _estado _caminho)
+  ;(print _estado)
+    (cond
+        ;((solucao _estado) _caminho) ;se o no' e' solucao, devolve o caminho: novo campo na estrutura problema
+        ((funcall (problema-solucao _problema) _estado) _caminho) ;se o no' e' solucao, devolve o caminho: novo campo na estrutura problema
+      ;  ((estado-final-p _estado) nil ) ;se e' estado final, nao faz nada e continua a procura (nota que a procura e' recursiva)
+        (t
+           ; (sucessor_recursivo _problema _estado _caminho  (reverse (accoes _estado)))
+             (sucessor_recursivo _problema _estado _caminho  (reverse (funcall (problema-accoes _problema) _estado)))
+
+        )
+    )
+)
+
+(defun sucessor_recursivo (_problema _estado _caminho _movimentos)
+
+          (cond ((null _movimentos) nil)
+          ;  (T (let (  (filho (funcall (problema-resultado _problema) (copia-estado _estado) (car _movimentos)) ) )
+              (T (let (  (filho (funcall (problema-resultado _problema) _estado (car _movimentos)) ) )
+                  (if filho
+                    (or (procura-pp-inicial _problema filho (push (car _movimentos) _caminho))
+                        (sucessor_recursivo _problema _estado (cdr _caminho) (cdr _movimentos)) ) ;Falso
+                    (sucessor_recursivo _problema _estado (cdr _caminho) (cdr _movimentos)))))
+                                                
+              )
+          )
+  
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -426,230 +519,3 @@
        (load "utils.fas")
 
 
-       ;;;
-       ;;;2a parte
-       ;;;
-
-;;; For example, to run depth first search with the farmer, wolf, 
-;;; goat, etc. problem, evaluate the definitions found in the file 
-;;; farmer_wolf_etc_rules_only, and evaluate:
-;
-;     (run-depth-first '(e e e e) '(w w w w) '(farmer-takes-self farmer-takes-wolf farmer-takes-goat farmer-takes-cabbage))
-;
-
-
-(defun depth-first-search (start goal been-list moves)
-  (cond ((equal start goal) 
-         (reverse (cons start been-list)))
-        (t (try-moves start goal been-list moves moves))))
-        
-;; (defun run-pp-search (_problema _listinha)
-;;   (cond ((funcall (problema-solucao _problema) (problema-estado-inicial _problema))
-;;           (reverse _listinha))
-;;         (t (try-moves-feira _problema (funcall (problema-accoes _problema) (problema-estado-inicial _problema)) _listinha)))
-;;         )
-
-
-;; (defun try-moves-feira (_problema moves-to-try _listinha)
-;;     (cond ((null moves-to-try) nil)
-;;           (t (let ((child (funcall (problema-resultado _problema) (problema-estado-inicial _problema) (car moves-to-try))))
-;;                 (if child 
-;;                   (or (depth-first-search _problema (funcall (problema-resultado _problema) (problema-estado-inicial _problema) (car moves-to-try)) _listinha moves)
-;;                       (try-moves-feira _problema _listinha (cdr moves-to-try) moves))
-;;                   (try-moves-feira _problema _listinha (cdr moves-to-try) moves))
-;;               )
-;;           )
-;;     )
-;; )
-
-
-; Try-moves scans down the list of moves in moves-to-try, 
-; attempting to generate a child state.  If it produces 
-; this state, it calls depth-first-search to complete the search.
-
-(defun try-moves (start goal been-list moves-to-try moves)
-  (cond ((null moves-to-try) nil)
-        ((member start been-list :test #'equal) nil)
-        (t (let ((child (funcall (car moves-to-try) start)))
-             (if child 
-               (or (depth-first-search (funcall (car moves-to-try) start)
-                                       goal
-                                       (cons start been-list)
-                                       moves)
-                   (try-moves start goal been-list (cdr moves-to-try) moves))
-               (try-moves start goal been-list (cdr moves-to-try) moves))))))
-
-               
-; run-depth-first calls depth-first-search, initializing the been-list to ().
-(defun run-depth-first (start goal moves)
-  (depth-first-search start goal () moves))
-       
-;; (defun run-pp-first (_problema)
-;;   (run-pp-search _problema ())
-;; )       
-;;      
-;;      
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-       (defun solve-fwgc (state goal) (path state goal nil))
-
-
-;;; The recursive path algorithm searches the space in a depth first 
-;;; fashion.
-
-(defun path (state goal been-list)
-   (cond ((null state) nil)
-         ((equal state goal) (reverse (cons state been-list)))
-         ((not (member state been-list :test #'equal))
-              (or (path (farmer-takes-self state) goal (cons state been-list))
-                  (path (farmer-takes-wolf state) goal (cons state been-list))
-                  (path (farmer-takes-goat state) goal (cons state been-list))
-                  (path (farmer-takes-cabbage state) goal (cons state been-list))))))
-
-
-;;; These functions define legal moves in the state space.  The take
-;;; a state as argument, and return the state produced by that operation.
-
-(defun farmer-takes-self (state)
-   (safe (make-state (opposite (farmer-side state))
-                (wolf-side state)
-                (goat-side state)
-                (cabbage-side state))))
-
-
-(defun farmer-takes-wolf (state)
-   (cond ((equal (farmer-side state) (wolf-side state))
-                     (safe (make-state (opposite (farmer-side state))
-                                                (opposite (wolf-side state))
-                                                (goat-side state)
-                                                (cabbage-side state))))
-            (t nil)))
-
-(defun farmer-takes-goat (state)
-   (cond ((equal (farmer-side state) (goat-side state))
-                  (safe (make-state (opposite (farmer-side state))
-                                             (wolf-side state)
-                                             (opposite (goat-side state))
-                                             (cabbage-side state)))) 
-            (t nil)))
-
-(defun farmer-takes-cabbage (state)
-   (cond ((equal (farmer-side state) (cabbage-side state))
-                    (safe (make-state (opposite (farmer-side state))
-                                               (wolf-side state)
-                                               (goat-side state)
-                                               (opposite (cabbage-side state)))))   
-           (t nil)))
-
-
-
-;;; These functions define states of the world
-;;; as an abstract data type.
-
-(defun make-state (f w g c) (list f w g c))
-
-(defun farmer-side ( state )
-   (nth 0 state))
-
-(defun wolf-side ( state )
-   (nth 1 state))
-
-(defun goat-side ( state )
-   (nth 2 state))
-
-(defun cabbage-side ( state )
-   (nth 3 state))
-
-;;; The function "opposite" takes a side and returns the opposite
-;;; side of the river.
-
-(defun opposite (side)
-   (cond ((equal side 'e) 'w)
-             ((equal side 'w) 'e)))
-
-;;; Safe returns nil if a state is not safe; it returns the state unchanged
-;;; if it is safe.
-
-(defun safe (state)
-   (cond ((and (equal (goat-side state) (wolf-side state))
-                     (not (equal (farmer-side state) (wolf-side state))))  nil)
-            ((and (equal (goat-side state) (cabbage-side state))
-                     (not (equal (farmer-side state) (goat-side state)))) nil)
-           (t state)))
-
-       
-       
-       
