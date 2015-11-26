@@ -434,104 +434,60 @@
               )
           )
   
-
-
-; (defun procura-A* (_problema _heuristica)
-;         (let  (
-;                 (best 99999)
-;                 (caminho (list) )
-;                 (actual 0)
-;                 (_estado (problema-estado-inicial _problema))
-;                 (_estado_resultado nil)
-;                 (_resultadoaux nil)
-;                 (_accaoaux nil )
-;                 (_accoes nil)
-;                 (_semsolucao t)
-;                 (_custo 0)
-;                 (hashtb (make-hash-table))
-;                 )
-                
-;                (loop while (and (not (solucao _estado)) _semsolucao) do
-;                 (format T "---------------------------------------------")
-;                 (format T "---------------------------------------------")
-;                         (setf _accoes (funcall (problema-accoes _problema) _estado))                
-;                         (dolist (_accao  _accoes)
-;                                 (setf _resultadoaux (funcall (problema-resultado _problema)  _estado _accao))
-;                                ;(setf actual (+ (- 0 (qualidade _resultadoaux)) (funcall _heuristica  _resultadoaux)))
-                               
-;                                (setf _custo (funcall (problema-custo-caminho _problema) _resultadoaux))
-;                                (print  _custo )
-
-;                                (setf actual (+  _custo (funcall _heuristica  _resultadoaux)))
-                               
-;                                 ; (format T "Actual: ")
-;                                 ; (print actual)
-;                                 ;  (format T "~%Accao: ")
-;                                 ; (print _accao)
-;                                 ; (print (estado-tabuleiro _resultadoaux))
-;                                 ; (format T "~%----------------~%")
-;                                 (if (<= actual best)
-;                                         (progn (setf best actual)  (setf _estado_resultado (copia-estado  _resultadoaux)) (setf _accaoaux _accao))
-;                                         ()
-;                                 )
-;                         )
-                        
-;                         (setf _estado (copia-estado _estado_resultado))
-;                         (push _accaoaux caminho)
-  
-;                         (cond ((null _accoes) (setf _semsolucao nil) (setf caminho nil))
-;                           (T ()))
-;                 )
-;         (reverse caminho)
-;         )
-; )
-;(procura-A* meu #'(lambda (x) 0))
-
 (defun procura-A* (_problema _heuristica)
         (let  (
+                (_ListaAccoes)
                 (caminho (list) )
-                ;(actual 0)
                 (_estado (problema-estado-inicial _problema))
                 (_par_resultado nil)
                 (_resultadoaux nil)
-                (_accoes nil)
                 (_semsolucao t)
                 (_custo 0)
                 (hashtb (make-hash-table))
                 (_listacustos (list))
-                (_custoOLD nil)
-                (last 9999)
+                (_accaoaux nil)
+                (_accaoOLD nil)
                 )
                ; (setf last (list-length (estado-pecas-por-colocar _estado)))
-               (loop while _semsolucao do
-                        (setf _accoes (funcall (problema-accoes _problema) _estado))                
-                        (dolist (_accao  _accoes) ;ITERAR A LISTA DE ACCOES
+              (loop while _semsolucao do
 
-                            (setf _resultadoaux (funcall (problema-resultado _problema)  _estado _accao));FILHO GERADO
-                            (setf _custo (+ (+ (funcall (problema-custo-caminho _problema) _resultadoaux) (funcall _heuristica  _resultadoaux)) last))
-                            (if (gethash _custo hashtb) (push (cons _resultadoaux _accao) (gethash _custo hashtb)) (progn (setf (gethash _custo hashtb) (list)) (push _custo _listacustos) (push (cons _resultadoaux _accao) (gethash _custo hashtb)) ) )
-                        )
+                  (if (funcall (problema-solucao _problema) _estado) (progn (setf caminho (copy-list _accaoOLD)) (setf _semsolucao nil)) ;())
+            (PROGN (setf _ListaAccoes (funcall (problema-accoes _problema) _estado))
+                  (cond
+                    ( (null _ListaAccoes) () )
+                    (t 
+                      (dolist (_accao  _ListaAccoes) ;ITERAR A LISTA DE ACCOES
                         
-                        (setf _listacustos (sort _listacustos #'<)) ;ORDENA A LISTA
-                        (setf _par_resultado (pop (gethash (car _listacustos) hashtb))) ;SACA O PRIMEIRO PAR ORDENADO
-                        ;(setf _estado (copia-estado (car _par_resultado) )) ;ATRIBUI O ESTADO
-                        (Setf _estado (car _par_resultado))
-                       ; (push  (cdr _par_resultado) caminho) ;ATRIBUI O CAMINHO
-                        ; (print _custoOLD)
-                        (if (eql _custoOLD (car _listacustos)) 
-                            (progn (pop caminho) (push (cdr _par_resultado) caminho)) 
-                            (progn (setf _custoOLD (car _listacustos)) (push (cdr _par_resultado) caminho)))
-                        
-                        ;(if (gethash (car _listacustos) hashtb) (push (cdr _par_resultado) caminho) (progn (pop caminho) (push (cdr _par_resultado) caminho) (pop _listacustos)))
-                         (if (gethash (car _listacustos) hashtb) () (pop _listacustos))  
-                        (cond ((null _accoes) (setf _semsolucao nil) (setf caminho nil))
-                          (T  (if (funcall (problema-solucao _problema) _estado)  (setf _semsolucao nil) ())) )
-                        (decf last)
-                )
-       ; (push (cdr _par_resultado) caminho)
+                        (setf _resultadoaux (funcall (problema-resultado _problema)  _estado _accao));FILHO GERADO
+                        (setf _custo  (+ (funcall (problema-custo-caminho _problema) _resultadoaux) (funcall _heuristica  _resultadoaux)) )
+
+                        ;(if _accaoOLD (progn (push _accao _accaoaux) (push _accaoOLD _accaoaux)) (push _accao _accaoaux))
+                        (if _accaoOLD (progn (setf _accaoaux (copy-list _accaoOLD)) (push _accao _accaoaux)) (push _accao _accaoaux))
+
+                        (if (gethash _custo hashtb) (push (cons _resultadoaux _accaoaux) (gethash _custo hashtb)) (progn (setf (gethash _custo hashtb) (list)) (push _custo _listacustos) (push (cons _resultadoaux _accaoaux) (gethash _custo hashtb)) ) )
+                        (setf _accaoaux (list))
+                      )
+                    )
+                  )
+                  (setf _listacustos (sort _listacustos #'<)) ;ORDENA A LISTA
+                  ;(print _listacustos)
+                  (setf _par_resultado (pop (gethash (car _listacustos) hashtb))) ;SACA O PRIMEIRO PAR ORDENADO
+                  (setf _estado (car _par_resultado)) ;ATRIBUI O ESTADO
+                  (setf _accaoOLD (cdr _par_resultado)) ;GUARDA O CAMINHO
+
+                  (if (gethash (car _listacustos) hashtb) () (progn (remhash (car _listacustos) hashtb) (pop _listacustos)))  
+
+                  (if (eql (hash-table-count hashtb) 0) (progn (setf _semsolucao nil) (setf caminho nil)) ())
+
+                  ))
+                  
+
+
+              )
         (reverse caminho)
         )
 )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
