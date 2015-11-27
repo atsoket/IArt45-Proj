@@ -354,29 +354,6 @@
      )
  )
 
-
-
- ; (defun aux-peca-altura-coluna (_peca coluna)
- ;     (let (  (altura (array-dimension _peca 0))   (contador (array-dimension _peca 0)) )          
- ;           ; (loop while (>= contador 0) do
- ;           ;   (if (equal (aref _peca (- contador 1) coluna ) NIL)
- ;           ;       (progn (decf altura)(decf contador))
- ;           ;       (setf contador -1)
- ;           ;   )
- ;          (dotimes (altura_coluna contador)
- ;              (if (equal (aref _peca altura_coluna coluna) NIL)
- ;                (decf altura)
- ;                ())
- ;          )
-
- ;     altura
- ;     )
- ; )
-
-;; ;; ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
 (defun qualidade (_estado)
     (- 0 (estado-pontos _estado))
     
@@ -408,13 +385,9 @@
 
 
 (defun procura-pp-inicial (_problema _estado _caminho)
-  ;(print _estado)
     (cond
-        ;((solucao _estado) _caminho) ;se o no' e' solucao, devolve o caminho: novo campo na estrutura problema
         ((funcall (problema-solucao _problema) _estado) _caminho) ;se o no' e' solucao, devolve o caminho: novo campo na estrutura problema
-      ;  ((estado-final-p _estado) nil ) ;se e' estado final, nao faz nada e continua a procura (nota que a procura e' recursiva)
         (t
-           ; (sucessor_recursivo _problema _estado _caminho  (reverse (accoes _estado)))
              (sucessor_recursivo _problema _estado _caminho  (reverse (funcall (problema-accoes _problema) _estado)))
 
         )
@@ -422,17 +395,18 @@
 )
 
 (defun sucessor_recursivo (_problema _estado _caminho _movimentos)
-
           (cond ((null _movimentos) nil)
-          ;  (T (let (  (filho (funcall (problema-resultado _problema) (copia-estado _estado) (car _movimentos)) ) )
-              (T (let (  (filho (funcall (problema-resultado _problema) _estado (car _movimentos)) ) )
+              (T (let (
+                      (filho (funcall (problema-resultado _problema) _estado (car _movimentos)))
+                      )
                   (if filho
                     (or (procura-pp-inicial _problema filho (push (car _movimentos) _caminho))
-                        (sucessor_recursivo _problema _estado (cdr _caminho) (cdr _movimentos)) ) ;Falso
-                    (sucessor_recursivo _problema _estado (cdr _caminho) (cdr _movimentos)))))
-                                                
+                        (sucessor_recursivo _problema _estado (cdr _caminho) (cdr _movimentos))) ;Falso
+                    (sucessor_recursivo _problema _estado (cdr _caminho) (cdr _movimentos)))
+                 )
               )
           )
+)
   
 (defun procura-A* (_problema _heuristica)
         (let  (
@@ -451,38 +425,58 @@
                ; (setf last (list-length (estado-pecas-por-colocar _estado)))
               (loop while _semsolucao do
 
-                  (if (funcall (problema-solucao _problema) _estado) (progn (setf caminho (copy-list _accaoOLD)) (setf _semsolucao nil)) ;())
-            (PROGN (setf _ListaAccoes (funcall (problema-accoes _problema) _estado))
-                  (cond
-                    ( (null _ListaAccoes) () )
-                    (t 
-                      (dolist (_accao  _ListaAccoes) ;ITERAR A LISTA DE ACCOES
-                        
-                        (setf _resultadoaux (funcall (problema-resultado _problema)  _estado _accao));FILHO GERADO
-                        (setf _custo  (+ (funcall (problema-custo-caminho _problema) _resultadoaux) (funcall _heuristica  _resultadoaux)) )
-
-                        ;(if _accaoOLD (progn (push _accao _accaoaux) (push _accaoOLD _accaoaux)) (push _accao _accaoaux))
-                        (if _accaoOLD (progn (setf _accaoaux (copy-list _accaoOLD)) (push _accao _accaoaux)) (push _accao _accaoaux))
-
-                        (if (gethash _custo hashtb) (push (cons _resultadoaux _accaoaux) (gethash _custo hashtb)) (progn (setf (gethash _custo hashtb) (list)) (push _custo _listacustos) (push (cons _resultadoaux _accaoaux) (gethash _custo hashtb)) ) )
-                        (setf _accaoaux (list))
-                      )
-                    )
-                  )
-                  (setf _listacustos (sort _listacustos #'<)) ;ORDENA A LISTA
-                  ;(print _listacustos)
-                  (setf _par_resultado (pop (gethash (car _listacustos) hashtb))) ;SACA O PRIMEIRO PAR ORDENADO
-                  (setf _estado (car _par_resultado)) ;ATRIBUI O ESTADO
-                  (setf _accaoOLD (cdr _par_resultado)) ;GUARDA O CAMINHO
-
-                  (if (gethash (car _listacustos) hashtb) () (progn (remhash (car _listacustos) hashtb) (pop _listacustos)))  
-
-                  (if (eql (hash-table-count hashtb) 0) (progn (setf _semsolucao nil) (setf caminho nil)) ())
-
-                  ))
+                  (if (funcall (problema-solucao _problema) _estado)
                   
+                      ;;TRUE
+                      (progn (setf caminho (copy-list _accaoOLD)) (setf _semsolucao nil))
+                      
+                      ;;FALSE
+                      (PROGN  (setf _ListaAccoes (funcall (problema-accoes _problema) _estado))
+                              (cond
+                                  ( (null _ListaAccoes) () )
+                                  (t 
+                                    (dolist (_accao  _ListaAccoes) ;ITERAR A LISTA DE ACCOES
+                                      
+                                      (setf _resultadoaux (funcall (problema-resultado _problema)  _estado _accao));FILHO GERADO
+                                      (setf _custo  (+ (funcall (problema-custo-caminho _problema) _resultadoaux) (funcall _heuristica  _resultadoaux)) )
 
+                                      (if _accaoOLD 
+                                          (progn (setf _accaoaux (copy-list _accaoOLD)) 
+                                          (push _accao _accaoaux)) (push _accao _accaoaux)
+                                      )
 
+                                      (if (gethash _custo hashtb)
+                                          (push (cons _resultadoaux _accaoaux) (gethash _custo hashtb))
+                                          (progn (setf (gethash _custo hashtb)(list))
+                                                 (push _custo _listacustos)
+                                                 (push (cons _resultadoaux _accaoaux)
+                                                 (gethash _custo hashtb))
+                                          ) 
+                                      )
+                                      (setf _accaoaux (list))
+                                    )
+                                  )
+                              )
+                              (setf _listacustos (sort _listacustos #'<)) ;ORDENA A LISTA
+                              ;(print _listacustos)
+                              (setf _par_resultado (pop (gethash (car _listacustos) hashtb))) ;SACA O PRIMEIRO PAR ORDENADO
+                              (setf _estado (car _par_resultado)) ;ATRIBUI O ESTADO
+                              (setf _accaoOLD (cdr _par_resultado)) ;GUARDA O CAMINHO
+
+                              (if (gethash (car _listacustos) hashtb)
+                                  ()
+                                  (progn (remhash (car _listacustos) hashtb) (pop _listacustos))
+                              )  
+
+                              (if (eql (hash-table-count hashtb) 0) 
+                                  (progn (setf _semsolucao nil)
+                                         (setf caminho nil)
+                                  ) 
+                                  ()
+                              )
+
+                      )
+                  )
               )
         (reverse caminho)
         )
@@ -512,7 +506,14 @@
 )
 
 
-
+(defun h (_estado)
+  (let ((sum 0))
+    (dotimes (_coluna (array-dimension (estado-tabuleiro _estado) 1))
+      (setf sum (+ sum (tabuleiro-altura-coluna (estado-tabuleiro _estado) _coluna)))
+    )
+  (sum)  
+  )
+)
 
 
 
