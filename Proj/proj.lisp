@@ -490,28 +490,32 @@
 
 
 
-;(defun procura-best (_array _lista-pecas)
-;   ( let ((_problema nil))
-;        (setf _problema
-;            (make-problema
-;               :estado-inicial
-;                    (make-estado
-;                        :pontos 0
-;                        :tabuleiro (array->tabuleiro _array)
-;                        :pecas-colocadas ()
-;                        :pecas-por-colocar _lista-pecas
-;                    )
-;                :solucao #'solucao
-;                :accoes #'accoes
-;                :resultado #'resultado
-;                :custo-caminho #'custo-oportunidade
-;            )
-;        )
-;    (procura-A* _problema '(h) )
-;    )
-;)
+(defun procura-best (_array _lista-pecas)
+   ( let ((_problema nil))
+        (setf _problema
+            (make-problema
+               :estado-inicial
+                    (make-estado
+                        :pontos 0
+                        :tabuleiro (array->tabuleiro _array)
+                        :pecas-colocadas ()
+                        :pecas-por-colocar _lista-pecas
+                    )
+                :solucao #'solucao
+                :accoes #'accoes
+                :resultado #'resultado
+                :custo-caminho #'custo-oportunidade
+            )
+        )
+    (procura-A* _problema #'qualidade )
+    )
+)
 
-;(defun h () 0)
+
+
+
+
+
 
 
 
