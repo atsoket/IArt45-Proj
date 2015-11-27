@@ -488,6 +488,14 @@
         )
 )
 
+
+;(defun resolve-best (_array _lista-pecas)
+;    (setf problema (make-problema :estado-inicial (cria-estado 0 _lista-pecas () (array->tabuleiro _array) )) :custo-caminho custo-oportunidade))
+;    (procura-A* problema #'(lambda (x) 0))
+;)
+
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
