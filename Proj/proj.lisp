@@ -54,10 +54,10 @@
 )
 
 ;;Percorre uma coluna a partir do topo, e retorna a sua altura assim que encontra uma posicao preenchida.
-(defun tabuleiro-altura-coluna _tabuleiro _coluna)
+(defun tabuleiro-altura-coluna (_tabuleiro _coluna)
     (let ((altura 18) (contador 0))
         (loop while (< contador 18)  do
-            (if (equal (aref _tabuleiro _contador _coluna) NIL)
+            (if (equal (aref _tabuleiro contador _coluna) NIL)
                 (progn (decf altura) (incf contador))
                 (setf contador 18)
             )
@@ -67,7 +67,7 @@
 )
 
 (defun tabuleiro-linha-completa-p (_tabuleiro _linha)
-    (setf l (- 17 l))
+    (setf _linha (- 17 _linha))
     (let(
 		(contador 0)
 		(completo T)
@@ -83,7 +83,7 @@
 )
 
 (defun tabuleiro-preenche! (_tabuleiro _linha _coluna)
-    (if (and (<= l 17) (<= c 9) )
+    (if (and (<= _linha 17) (<= _coluna 9) )
         (setf (aref _tabuleiro (- 17 _linha ) _coluna) T)
         NIL
     )
