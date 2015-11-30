@@ -498,15 +498,19 @@
                 :solucao #'solucao
                 :accoes #'accoes
                 :resultado #'resultado
-                :custo-caminho #'qualidade
+                :custo-caminho #'zero ;#'qualidade
             )
         )
-    (procura-A* _problema #'H )
+    (procura-A* _problema #'custo-oportunidade )
     )
+)  
+
+(defun zero (cenas)
+  (* 0 (estado-pontos cenas)) 
 )
 
 (defun H (_estado)
-  (+ (* 20 (h0NumeroBuracos _estado)) (h1AlturaMax _estado) (h2CelulasPReenchidas _estado) (h3DiferencaAlturas _estado) (h4MaxDiferenca _estado) (h5PesoAltura _estado) )
+  (+ (* 20 (h0NumeroBuracos _estado)) (* 1 (h1AlturaMax _estado)) (* 1 (h2CelulasPReenchidas _estado)) (* 1 (h3DiferencaAlturas _estado)) (* 1(h4MaxDiferenca _estado)) (* 1 (h5PesoAltura _estado)) )
 )
 
 (defun h0NumeroBuracos (_estado)
