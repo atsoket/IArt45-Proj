@@ -37,11 +37,11 @@
 ;;tabuleiro_original, copia os valores para o auxiliar.
 ;;No fim retorna o tabuleiro auxiliar.
 
-(defun copia-tabuleiro (taboriginal)
+(defun copia-tabuleiro (_taboriginal)
     (let ( (tabnovo (make-array '(18 10)) ) )
         (dotimes (linha 18)
             (dotimes (coluna 10)
-                (setf (aref tabnovo linha coluna) (aref taboriginal linha coluna))
+                (setf (aref tabnovo linha coluna) (aref _taboriginal linha coluna))
             )
         )
     tabnovo)
@@ -50,15 +50,15 @@
 
 ;;Esta funcao verifica se uma dada posicao de um tabuleiro
 ;; esta' preenchida.
-(defun tabuleiro-preenchido-p (tab l c)
-    (aref tab (- 17 l) c )
+(defun tabuleiro-preenchido-p (_tabuleiro _linha _coluna)
+    (aref _tabuleiro (- 17 _linha) _coluna )
 )
 
 ;;Percorre uma dada coluna, e retorna a altura assim que encontra uma casa preenchida.
-(defun tabuleiro-altura-coluna (tab c)
+(defun tabuleiro-altura-coluna _tabuleiro _coluna)
     (let ((altura 18) (contador 0))
         (loop while (< contador 18)  do
-            (if (equal (aref tab contador c) NIL)
+            (if (equal (aref _tabuleiro _contador _coluna) NIL)
                 (progn (decf altura) (incf contador))
                 (setf contador 18)
             )
@@ -68,13 +68,13 @@
 
 ;;esta funcao retorna NIL, assim que encontrar uma posicao vazia.
 ;;consequentemente interrompe o ciclo, visto que deixa de ser necessa'rio.
-(defun tabuleiro-linha-completa-p (tab l)
+(defun tabuleiro-linha-completa-p (_tabuleiro _linha)
     (setf l (- 17 l))
     (let (
           (contador 0)
           (completo T))
         (loop while (< contador 10)  do
-            (if (equal (aref tab l contador) NIL)
+            (if (equal (aref _tabuleiro _linha contador) NIL)
                     (progn (setf contador 10) (setf completo NIL))
                     (incf contador)
             )
@@ -84,9 +84,9 @@
 
 ;;preenche uma posicao do tabuleiro.
 
-(defun tabuleiro-preenche! (tab l c)
+(defun tabuleiro-preenche! (_tabuleiro _linha _coluna)
     (if (and (<= l 17) (<= c 9) )
-        (setf (aref tab (- 17 l ) c) T)
+        (setf (aref _tabuleiro (- 17 _linha ) _coluna) T)
         NIL
     )
 )
