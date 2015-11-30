@@ -8,16 +8,16 @@
 ;;;;;;;;;;;;;;
 
 
-(defun cria-accao (cole apecas)
-    (cons cole apecas)
+(defun cria-accao (_coluna _peca)
+    (cons _coluna _peca)
 )
 
-(defun accao-coluna (acc)
-    (car acc)
+(defun accao-coluna (_accao)
+    (car _accao)
 )
 
-(defun accao-peca (acc)
-    (cdr acc)
+(defun accao-peca (_accao)
+    (cdr _accao)
 )
 
 
@@ -498,20 +498,125 @@
                 :solucao #'solucao
                 :accoes #'accoes
                 :resultado #'resultado
-                :custo-caminho #'custo-oportunidade
+                :custo-caminho #'qualidade
             )
         )
-    (procura-A* _problema #'qualidade )
+    (procura-A* _problema #'H )
     )
 )
 
+(defun H (_estado)
+  (+ (* 20 (h0NumeroBuracos _estado)) (h1AlturaMax _estado) (h2CelulasPReenchidas _estado) (h3DiferencaAlturas _estado) (h4MaxDiferenca _estado) (h5PesoAltura _estado) )
+)
 
-(defun h (_estado)
-  (let ((sum 0))
-    (dotimes (_coluna (array-dimension (estado-tabuleiro _estado) 1))
-      (setf sum (+ sum (tabuleiro-altura-coluna (estado-tabuleiro _estado) _coluna)))
+(defun h0NumeroBuracos (_estado)
+    (let (
+          (_tabuleiro (estado-tabuleiro _estado))
+          (_colunas (array-dimension (estado-tabuleiro _estado) 1))
+          (_nrBuracos 0)
+          (_alturaColuna 0)
+         )
+        (dotimes (coluna _colunas)
+            (setf _alturaColuna (tabuleiro-altura-coluna _tabuleiro coluna))s
+            (dotimes (pos _alturaColuna)
+                (if  (equal (aref _tabuleiro (- 17 pos) coluna) nil) (incf _nrBuracos) ())
+            )
+          )
+        _nrBuracos
     )
-  (sum)  
+
+)
+
+(defun h1AlturaMax (_estado)
+  (let (
+        (_tabuleiro (estado-tabuleiro _estado))
+        (_colunas (array-dimension (estado-tabuleiro _estado) 1))
+        (_alturaColunaMax -1)
+        (_alturaColuna 0)
+       )
+      (dotimes (coluna _colunas)
+        (setf _alturaColuna (tabuleiro-altura-coluna _tabuleiro coluna))
+        (if (< _alturaColunaMax _alturaColuna) 
+            (setf _alturaColunaMax _alturaColuna)
+            ()
+        )
+      )
+  _alturaColunaMax ;Devolve a altura da coluna mais alta
+  )
+)
+
+(defun h2CelulasPReenchidas (_estado)
+      (- (h99SomaDasAlturas _estado) (h0NumeroBuracos _estado))
+)
+
+(defun h3DiferencaAlturas (_estado)
+  (let (
+        (_tabuleiro (estado-tabuleiro _estado))
+        (_colunas (- (array-dimension (estado-tabuleiro _estado) 1) 1))
+        (_maxDiferenca 0)
+        (_Diferenca 0)
+      )
+      (dotimes (coluna _colunas)
+          (setf _Diferenca (h98CalculaDiferenca _tabuleiro coluna))
+          (if (< _maxDiferenca _Diferenca)
+              (setf _maxDiferenca _Diferenca)
+              ()
+          )
+      )
+  _maxDiferenca
+  )
+)
+
+(defun h98CalculaDiferenca (_tabuleiro _coluna)
+    (abs (- (tabuleiro-altura-coluna _tabuleiro _coluna) (tabuleiro-altura-coluna _tabuleiro (+ _coluna 1))))
+)
+
+(defun h4MaxDiferenca (_estado)
+  (let (
+        (_tabuleiro (estado-tabuleiro _estado))
+        (_colunas (- (array-dimension (estado-tabuleiro _estado) 1) 1))
+        (_sumDiferenca 0)
+      )
+      (dotimes (coluna _colunas)
+          (setf _sumDiferenca (+ _sumDiferenca (h98CalculaDiferenca _tabuleiro coluna)))
+      )
+  _sumDiferenca
+  )
+)
+
+(defun h5PesoAltura (_estado)
+
+  (let  (
+        (_tabuleiro (estado-tabuleiro _estado))
+        (_colunas (array-dimension (estado-tabuleiro _estado) 1))
+        (_linhas (array-dimension (estado-tabuleiro _estado) 0))
+        (soma 0)
+        (total 0)
+        )
+    (dotimes (linha _linhas)
+            (dotimes (coluna _colunas)
+                (if (aref _tabuleiro (- 17 linha) coluna) 
+                    (incf soma)
+                    ()
+                )
+            )
+            (setf total (+ total (* (+ linha 1) soma)))
+            (setf soma 0)
+        )
+  total)
+)
+
+
+(defun h99SomaDasAlturas (_estado)
+  (let (
+        (_tabuleiro (estado-tabuleiro _estado))
+        (_colunas (array-dimension (estado-tabuleiro _estado) 1))
+        (_sum 0)
+        )
+    (dotimes (coluna _colunas)
+      (setf _sum (+ _sum (tabuleiro-altura-coluna _tabuleiro coluna)))
+    )
+  _sum  
   )
 )
 
@@ -537,7 +642,7 @@
 (defun bota-lixo (taboriginal)
         (dotimes (linha 18)
             (dotimes (coluna 10)
-                (setf (aref taboriginal linha coluna) (random-element-meu '(NIL "O")))
+                (setf (aref taboriginal linha coluna) (random-element-meu '(NIL T)))
             )
         )
 )
