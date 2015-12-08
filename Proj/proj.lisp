@@ -773,4 +773,8 @@
 (format t "~c[44m------------------------~c[0m~%~%" #\ESC #\ESC)
 (load "teste_3.lisp")
 (format t "~c[44m------------------------~c[0m~%~%" #\ESC #\ESC)
+(load "teste_3a.lisp")
+(format t "~c[44m------------------------~c[0m~%~%" #\ESC #\ESC)
+(load "teste_3b.lisp")
+(format t "~c[44m------------------------~c[0m~%~%" #\ESC #\ESC)
 (load "teste_4.lisp")
