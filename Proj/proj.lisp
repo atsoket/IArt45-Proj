@@ -367,13 +367,46 @@
 
 (defun custo-oportunidade (_estado)
     (let(
-		      (custo (* (length (estado-pecas-colocadas _estado)) 300))
-		    )
+          (custo (* (length (estado-pecas-colocadas _estado)) 300))
+        )
         
-    		(dolist (_peca (estado-pecas-colocadas _estado))
+        (dolist (_peca (estado-pecas-colocadas _estado))
                 (cond 
                     ((or (equal _peca 'j) (equal _peca 'l)) (setf custo (+ custo 200)))
                     ((equal _peca  'i) (setf custo (+ custo 500)))
+                )
+        )
+
+    (- custo (estado-pontos _estado))
+    )
+)
+
+(defun custo-oportunidade2 (_estado)
+    ; (let(
+		  ;     (custo (* (length (estado-pecas-colocadas _estado)) 300))
+		  ;   )
+        
+    ; 		(dolist (_peca (estado-pecas-colocadas _estado))
+    ;             (cond 
+    ;                 ((or (equal _peca 'j) (equal _peca 'l)) (setf custo (+ custo 200)))
+    ;                 ((equal _peca  'i) (setf custo (+ custo 500)))
+    ;             )
+    ;     )
+
+    ; (- custo (estado-pontos _estado))
+    ; )
+
+        (let(
+          ;(custo (* (length (estado-pecas-colocadas _estado)) 300))
+          (custo 0)
+          (lista_pecas (estado-pecas-colocadas _estado))
+        )
+        
+        (dolist (_peca lista_pecas)
+                (cond 
+                    ((or (equal _peca 'j) (equal _peca 'l)) (setf custo (+ custo 500)))
+                    ((equal _peca  'i) (setf custo (+ custo 800)))
+                    (T (setf custo (+ custo 300)))
                 )
         )
 
@@ -406,7 +439,7 @@
 
 (defun procura-pp-inicial (_problema _estado _caminho)
     (cond
-        ((funcall (problema-solucao _problema) _estado) _caminho)
+        ((funcall (problema-solucao _problema) _estado) (format t "~c[41mPONTOS:~c[0m" #\ESC #\ESC) (print (estado-pontos _estado)) _caminho)
         (t
             (sucessor _problema _estado _caminho  (reverse (funcall (problema-accoes _problema) _estado)))
         )
@@ -514,7 +547,7 @@
 						)  
 
 						(if (eql (hash-table-count hashtb) 0)  ;verifica se a hashtable esta vazia
-							(progn	(setf _semsolucao nil)
+							(progn	(format t "~c[41mSEM_SOLUCAO:~c[0m" #\ESC #\ESC) (setf _semsolucao nil)
 									(setf caminho nil)
 							) 
 							()
@@ -523,6 +556,8 @@
 				)
 			)
 		)
+(format t "~c[41mPONTOS:~c[0m" #\ESC #\ESC)
+  (print (estado-pontos _estado))
 	(reverse caminho)
 	)
 )
@@ -549,7 +584,7 @@
                 :custo-caminho #'custo-oportunidade
             )
         )
-    (procura-A* _problema #'qualidade )
+    (procura-A* _problema #'H)
     )
 )  
 ;;;;;;;;;;;;;;;;;;;
@@ -569,10 +604,10 @@
 		(c3 1)
 		(c4 1)
 		(c5 1)
-		(c99 0)
+	;	(c99 0)
 		)
 
-		(+ (* c0 (h0 _estado)) (* c1 (h1 _estado)) (* c2 (h2 _estado)) (* c3 (h3 _estado)) (* c4(h4 _estado)) (* c5 (h5 _estado)) (* c99 (h99 _estado)))
+		(+ (* c0 (h0 _estado)) (* c1 (h1 _estado)) (* c2 (h2 _estado)) (* c3 (h3 _estado)) (* c4(h4 _estado)) (* c5 (h5 _estado)))
 	)
 )
 
@@ -646,11 +681,11 @@
         (_tabuleiro (estado-tabuleiro _estado))
         (_colunas (- (array-dimension (estado-tabuleiro _estado) 1) 1))
         (_sumDiferenca 0)
-		)
+		  )
       
-		(dotimes (coluna _colunas)
-			(setf _sumDiferenca (+ _sumDiferenca (calcula_diferenca_altura_aux _tabuleiro coluna)))
-		)
+  		(dotimes (coluna _colunas)
+  			(setf _sumDiferenca (+ _sumDiferenca (calcula_diferenca_altura_aux _tabuleiro coluna)))
+  		)
   _sumDiferenca
 	)
 )
@@ -663,32 +698,34 @@
         (_linhas (array-dimension (estado-tabuleiro _estado) 0))
         (soma 0)
         (total 0)
-        )
+      )
 		
-		(dotimes (linha _linhas)
-            (dotimes (coluna _colunas)
-                (if (aref _tabuleiro (- 17 linha) coluna) 
-                    (incf soma)
-                    ()
-                )
-            )
-            (setf total (+ total (* (+ linha 1) soma)))
-            (setf soma 0)
-        )
+  		(dotimes (linha _linhas)
+          (dotimes (coluna _colunas)
+              (if (aref _tabuleiro (- 17 linha) coluna) 
+                  (incf soma)
+                  ()
+              )
+          )
+          (setf total (+ total (* (+ linha 1) soma)))
+          (setf soma 0)
+      )
+
 	total
 	)
 )
 
 (defun h99 (_estado) ;devolve a soma das alturas de todas as colunas
   (let	(
-		(_tabuleiro (estado-tabuleiro _estado))
-		(_colunas (array-dimension (estado-tabuleiro _estado) 1))
-        (_sum 0)
+		      (_tabuleiro (estado-tabuleiro _estado))
+		      (_colunas (array-dimension (estado-tabuleiro _estado) 1))
+          (_sum 0)
         )
 		
-    (dotimes (coluna _colunas)
-		(setf _sum (+ _sum (tabuleiro-altura-coluna _tabuleiro coluna)))
-    )
+        (dotimes (coluna _colunas)
+	          (setf _sum (+ _sum (tabuleiro-altura-coluna _tabuleiro coluna)))
+        )
+
   _sum  
   )
 )
@@ -729,3 +766,11 @@
 ;(load "utils.lisp")
 ;(load (compile-file "utils.lisp"))
 (load "utils.fas")
+
+(load "teste_1.lisp")
+(format t "~c[44m------------------------~c[0m~%~%" #\ESC #\ESC)
+(load "teste_2.lisp")
+(format t "~c[44m------------------------~c[0m~%~%" #\ESC #\ESC)
+(load "teste_3.lisp")
+(format t "~c[44m------------------------~c[0m~%~%" #\ESC #\ESC)
+(load "teste_4.lisp")
